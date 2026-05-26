@@ -6,1486 +6,912 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-:root{--blue:#0059a9;--blue-light:#e8f0f9;--blue-dark:#003d7a;--red:#c0392b;--green:#27ae60;--orange:#e67e22;--gray-50:#f7f9fb;--gray-100:#f0f2f5;--gray-200:#e1e4e8;--gray-300:#c9cdd4;--gray-400:#9aa0a8;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;--white:#fff;--shadow-sm:0 1px 3px rgba(0,0,0,.07);--shadow:0 2px 8px rgba(0,0,0,.1);--radius:6px;--font:'Heebo',sans-serif}
+:root{--blue:#0059a9;--bl:#e8f0f9;--bd:#003d7a;--red:#c0392b;--g50:#f7f9fb;--g100:#f0f2f5;--g200:#e1e4e8;--g300:#c9cdd4;--g400:#9aa0a8;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--w:#fff;--sh:0 1px 3px rgba(0,0,0,.07);--sh2:0 2px 8px rgba(0,0,0,.1);--r:6px;--f:'Heebo',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);min-height:100vh;font-size:15px}
-a{color:var(--blue);text-decoration:none}
-button{font-family:var(--font);cursor:pointer}
-input,textarea,select{font-family:var(--font)}
+body{font-family:var(--f);background:var(--g50);color:var(--g800);min-height:100vh;font-size:15px}
 svg{display:inline-block;vertical-align:middle;flex-shrink:0}
+button,input,textarea,select{font-family:var(--f)}
 .app{display:flex;min-height:100vh}
-/* Sidebar */
-.sidebar{width:60px;background:var(--white);border-left:1px solid var(--gray-200);display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:6px;position:sticky;top:0;height:100vh;z-index:100;flex-shrink:0}
-.sidebar-left{border-left:none;border-right:1px solid var(--gray-200)}
-.sidebar-btn{width:44px;height:44px;border-radius:10px;border:none;background:none;color:var(--gray-500);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s;position:relative}
-.sidebar-btn:hover,.sidebar-btn.active{background:var(--blue-light);color:var(--blue)}
-.notif-badge{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
-/* Main */
+.sb{width:60px;background:var(--w);border-left:1px solid var(--g200);display:flex;flex-direction:column;align-items:center;padding-top:14px;gap:5px;position:sticky;top:0;height:100vh;z-index:100;flex-shrink:0}
+.sbl{border-left:none;border-right:1px solid var(--g200)}
+.sbb{width:44px;height:44px;border-radius:10px;border:none;background:none;color:var(--g500);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.15s}
+.sbb:hover,.sbb.on{background:var(--bl);color:var(--blue)}
+.nbadge{position:absolute;top:6px;right:6px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
-.topbar{background:var(--white);border-bottom:1px solid var(--gray-200);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:16px}
-.topbar-logo{font-size:22px;font-weight:900;color:var(--blue);cursor:pointer;user-select:none}
-.topbar-logo span{color:var(--gray-700)}
-.topbar-search{position:relative;flex:0 0 300px}
-.topbar-search input{width:100%;padding:7px 36px 7px 12px;border:1px solid var(--gray-200);border-radius:20px;background:var(--gray-50);font-size:14px;outline:none;transition:border .15s}
-.topbar-search input:focus{border-color:var(--blue);background:var(--white)}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400)}
-.topbar-actions{display:flex;align-items:center;gap:10px}
-/* Buttons */
-.btn{padding:7px 16px;border-radius:var(--radius);border:none;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
-.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-dark)}
-.btn-secondary{background:var(--gray-100);color:var(--gray-700);border:1px solid var(--gray-200)}.btn-secondary:hover{background:var(--gray-200)}
-.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#a93226}
-.btn-sm{padding:4px 10px;font-size:13px}
-.btn-ghost{background:none;border:1px solid var(--gray-200);color:var(--gray-600)}.btn-ghost:hover{background:var(--gray-50)}
-/* Pages */
-.page{display:none;flex:1;padding:24px;flex-direction:column;gap:20px;max-width:960px;width:100%;margin:0 auto}
-.page.active{display:flex}
-.page-wide{max-width:900px}
-.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray-500)}
-.breadcrumb .bc-link{cursor:pointer;color:var(--blue)}.breadcrumb .bc-link:hover{text-decoration:underline}
-.breadcrumb .sep{color:var(--gray-300)}
-.banner{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow-sm)}
-.banner-title{font-size:18px;font-weight:700}.banner-sub{font-size:14px;color:var(--gray-500);margin-top:4px}
-/* Categories */
-.cat-block{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
-.cat-header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid var(--gray-100)}
-.cat-title{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px}
-.cat-meta{display:flex;align-items:center;gap:12px}
-.stat-box{background:var(--gray-50);border:1px solid var(--gray-200);padding:6px 12px;border-radius:var(--radius);text-align:center;min-width:66px}
-.stat-num{font-size:15px;font-weight:700;color:var(--gray-700)}.stat-lbl{font-size:11px;color:var(--gray-400)}
-.cat-body{padding:12px 24px}
-.forum-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px}
-.forum-link{display:flex;align-items:center;gap:8px;padding:8px 0;color:var(--gray-700);font-size:14px;font-weight:500;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:color .1s}
-.forum-link:hover{color:var(--blue)}
-.forum-link-stats{margin-right:auto;font-size:12px;color:var(--gray-400)}
-/* Admin bar */
-.admin-bar{background:linear-gradient(135deg,#fff9e6,#fff3cc);border:1px solid #f0d060;border-radius:var(--radius);padding:10px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.admin-badge{background:#f0d060;color:#7a5c00;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
-/* Forum header */
-.forum-header-bar{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow-sm);gap:12px}
-/* Topics table */
-.topics-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200)}
-.topics-table th{background:var(--gray-50);padding:10px 16px;font-size:13px;font-weight:600;color:var(--gray-500);text-align:right;border-bottom:1px solid var(--gray-200)}
-.topics-table td{padding:12px 16px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
-.topics-table tr:last-child td{border-bottom:none}
-.topics-table tr:hover td{background:var(--gray-50)}
-.topic-title-link{font-weight:600;color:var(--gray-800);cursor:pointer}.topic-title-link:hover{color:var(--blue)}
-.topic-badges{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
-.tbadge{font-size:11px;padding:1px 7px;border-radius:20px;font-weight:600;display:inline-flex;align-items:center;gap:3px}
-.tb-pinned{background:#e8f4fd;color:#1a6fa3}.tb-locked{background:#fdf0e8;color:#c0622b}.tb-new{background:#e8f9ee;color:#1a6f3f}
-.topic-meta{font-size:12px;color:var(--gray-400);margin-top:2px}
-.topic-stat{text-align:center;font-size:14px;font-weight:600;color:var(--gray-600)}
-/* Posts */
-.post{display:flex;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow-sm)}
-.post-sidebar{width:155px;min-width:155px;background:var(--gray-50);border-left:1px solid var(--gray-200);padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
-.post-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;margin-bottom:2px}
-.post-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.post-username{font-size:13px;font-weight:700;color:var(--blue);cursor:pointer}.post-username:hover{text-decoration:underline}
-.post-role{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;display:inline-flex;align-items:center;gap:3px}
-.role-admin{background:#fff0c2;color:#7a5000}.role-member{background:var(--gray-100);color:var(--gray-500)}.role-banned{background:#fde8e8;color:#a00}
-.post-rep{font-size:11px;color:var(--gray-500)}.post-count{font-size:11px;color:var(--gray-400)}
-.post-body{flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
-.post-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--gray-100)}
-.post-time{font-size:12px;color:var(--gray-400)}.post-num{font-size:12px;color:var(--gray-300)}
-/* Rich content */
-.post-content{font-size:15px;line-height:1.75;color:var(--gray-700);word-break:break-word}
-.post-content strong{font-weight:700}
-.post-content em{font-style:italic}
-.post-content u{text-decoration:underline}
-.post-content s{text-decoration:line-through}
-.post-content hr{border:none;border-top:2px solid var(--gray-200);margin:12px 0}
-.post-content img{max-width:100%;border-radius:6px;margin:6px 0;cursor:zoom-in;display:block}
-.post-content a{color:var(--blue)}
-/* Spoiler accordion */
-.spoiler-block{border:1px solid var(--gray-200);border-radius:var(--radius);overflow:hidden;margin:6px 0}
-.spoiler-toggle{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--gray-50);cursor:pointer;font-size:13px;font-weight:600;color:var(--gray-600);border:none;width:100%;text-align:right;transition:background .1s}
-.spoiler-toggle:hover{background:var(--gray-100)}
-.spoiler-toggle svg{transition:transform .2s}
-.spoiler-toggle.open svg{transform:rotate(90deg)}
-.spoiler-body{padding:12px 14px;font-size:14px;color:var(--gray-700);display:none}
-.spoiler-body.open{display:block}
-/* Hidden text blur */
-.hidden-text{filter:blur(5px);transition:filter .25s;cursor:pointer;user-select:none;border-radius:3px}
-.hidden-text:hover{filter:blur(0)}
-/* Post quote */
-.post-quote{background:var(--gray-50);border-right:3px solid var(--blue);padding:10px 14px;border-radius:4px;margin-bottom:10px;font-size:13px}
-.post-quote-author{font-weight:600;color:var(--blue);font-size:12px;margin-bottom:4px}
-.post-quote-text{color:var(--gray-600);overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-.post-deleted{color:var(--gray-400);font-style:italic;font-size:14px;background:var(--gray-50);padding:12px;border-radius:4px;border-right:3px solid var(--gray-300)}
-/* Post footer */
-.post-footer{display:flex;align-items:center;gap:6px;padding-top:10px;border-top:1px solid var(--gray-100);flex-wrap:wrap}
-.post-edited{font-size:11px;color:var(--gray-400);font-style:italic;margin-right:auto}
-.react-wrap{position:relative;display:inline-flex}
-.react-btn{display:flex;align-items:center;gap:4px;padding:5px 11px;border-radius:20px;border:1px solid var(--gray-200);background:var(--white);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--gray-600)}
-.react-btn:hover{border-color:var(--blue);color:var(--blue)}
-.react-btn.liked{background:#e8f4fd;border-color:#1a6fa3;color:#1a6fa3}
-.react-btn.disliked{background:#fdf0e8;border-color:#c0622b;color:#c0622b}
-.react-tooltip{position:absolute;bottom:calc(100% + 6px);right:0;background:var(--gray-900);color:#fff;border-radius:6px;padding:6px 10px;font-size:12px;white-space:nowrap;z-index:200;display:none;max-width:220px;word-break:break-all}
-.react-wrap:hover .react-tooltip{display:block}
-.action-btn{padding:5px 9px;border:1px solid var(--gray-200);background:none;border-radius:4px;font-size:12px;color:var(--gray-500);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .1s}
-.action-btn:hover{background:var(--gray-50);color:var(--blue)}
-/* Editor */
-.editor-wrap{border:1px solid var(--gray-200);border-radius:var(--radius);overflow:hidden;background:var(--white)}
-.editor-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,89,169,.1)}
-.editor-toolbar{display:flex;align-items:center;gap:2px;padding:6px 8px;background:var(--gray-50);border-bottom:1px solid var(--gray-200);flex-wrap:wrap}
-.tb{width:30px;height:28px;border:none;background:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);font-size:12px;font-weight:700;transition:background .1s}
-.tb:hover{background:var(--gray-200);color:var(--blue)}
-.tb-sep{width:1px;height:18px;background:var(--gray-200);margin:0 3px}
-.tb-wide{width:auto;padding:0 8px;font-size:11px}
-.editor-textarea{width:100%;min-height:120px;padding:12px;border:none;outline:none;font-size:14px;resize:vertical;font-family:var(--font);line-height:1.65;background:var(--white)}
-.editor-footer{padding:6px 10px;background:var(--gray-50);border-top:1px solid var(--gray-200);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.img-label{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--gray-200);border-radius:4px;font-size:12px;color:var(--gray-600);cursor:pointer;transition:background .1s}
-.img-label:hover{background:var(--gray-200)}
-.img-label input{display:none}
-.up-prog{font-size:12px;color:var(--blue)}
-.img-url-wrap{display:flex;gap:6px;align-items:center;flex:1}
-.img-url-input{flex:1;padding:4px 8px;border:1px solid var(--gray-200);border-radius:4px;font-size:12px;outline:none}
-.img-url-input:focus{border-color:var(--blue)}
-/* Reply box */
-.reply-box{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm)}
-.reply-title{font-size:15px;font-weight:700;margin-bottom:12px;color:var(--gray-700);display:flex;align-items:center;gap:6px}
-.quote-preview{background:var(--gray-50);border-right:3px solid var(--blue);padding:10px 14px;border-radius:4px;margin-bottom:10px;font-size:13px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.quote-preview-close{background:none;border:none;cursor:pointer;color:var(--gray-400);padding:0;flex-shrink:0;display:flex;align-items:center}
-.reply-actions{display:flex;gap:8px;margin-top:10px}
-/* Poll notification bar */
-.new-posts-bar{background:#e8f4fd;border:1px solid #9dc6e8;border-radius:var(--radius);padding:10px 18px;display:flex;align-items:center;gap:10px;font-size:14px;color:#1a5a9a;cursor:pointer;transition:background .1s}
-.new-posts-bar:hover{background:#d0e8f5}
-/* Pagination */
-.pagination{display:flex;gap:4px;align-items:center;justify-content:center}
-.page-btn{width:36px;height:36px;border-radius:var(--radius);border:1px solid var(--gray-200);background:var(--white);cursor:pointer;font-size:14px;font-weight:600;color:var(--gray-600);transition:all .15s;display:flex;align-items:center;justify-content:center}
-.page-btn:hover,.page-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.page-btn:disabled{opacity:.4;cursor:not-allowed}
-/* Profile */
-.profile-header{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:24px;display:flex;gap:24px;align-items:flex-start;box-shadow:var(--shadow-sm)}
-.profile-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
-.profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.profile-name{font-size:22px;font-weight:800}
-.profile-stats{display:flex;gap:20px;margin-top:10px}
-.profile-stat-num{font-size:18px;font-weight:800;color:var(--blue)}
-.profile-stat-lbl{font-size:12px;color:var(--gray-400)}
-/* Tabs */
-.tabs{display:flex;border-bottom:2px solid var(--gray-200);margin-bottom:16px}
-.tab-btn{padding:9px 20px;border:none;background:none;font-size:14px;font-weight:600;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
-.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
-.tab-content{display:none}.tab-content.active{display:block}
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.hidden{display:none}
-.modal{background:var(--white);border-radius:10px;padding:28px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:90vh;overflow-y:auto}
-.modal-wide{max-width:640px}
-.modal-title{font-size:18px;font-weight:800;margin-bottom:18px;color:var(--gray-800)}
-.modal-close{position:absolute;top:16px;left:16px;background:none;border:none;cursor:pointer;color:var(--gray-400);padding:4px;display:flex}
-.modal-close:hover{color:var(--gray-700)}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
-.form-group{margin-bottom:14px}
-.form-label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:5px}
-.form-input{width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius);font-size:14px;outline:none;transition:border .15s}
-.form-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,89,169,.1)}
-.form-textarea{width:100%;padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius);font-size:14px;outline:none;resize:vertical;min-height:80px}
-.form-textarea:focus{border-color:var(--blue)}
-.form-error{font-size:13px;color:var(--red);margin-top:5px;display:none}
-.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-100)}
-.toggle-label{font-size:14px;color:var(--gray-700);font-weight:500}
-.toggle-desc{font-size:12px;color:var(--gray-400);margin-top:2px}
-.toggle{position:relative;width:40px;height:22px;display:inline-block}
-.toggle input{opacity:0;width:0;height:0;position:absolute}
-.toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--gray-300);border-radius:22px;transition:.2s}
-.toggle-slider:before{content:"";position:absolute;width:16px;height:16px;right:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
-.toggle input:checked+.toggle-slider{background:var(--blue)}
-.toggle input:checked+.toggle-slider:before{transform:translateX(-18px)}
-/* Notifications panel */
-.notif-panel{position:fixed;top:56px;left:0;width:320px;background:var(--white);border:1px solid var(--gray-200);border-radius:0 0 var(--radius) var(--radius);box-shadow:var(--shadow);z-index:300;max-height:400px;overflow-y:auto;display:none}
-.notif-panel.open{display:block}
-.notif-item{padding:12px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background .1s;font-size:13px}
-.notif-item:hover{background:var(--gray-50)}
-.notif-item.unread{background:#f0f6ff}
-.notif-item-title{font-weight:600;color:var(--gray-800);margin-bottom:2px}
-.notif-item-sub{color:var(--gray-500);font-size:12px}
-/* Users table */
-.user-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--gray-100);font-size:14px}
-.user-row:last-child{border-bottom:none}
-.user-row:hover{background:var(--gray-50)}
-/* Search results */
-.search-results{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
-.sr-item{padding:14px 20px;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background .1s}
-.sr-item:last-child{border-bottom:none}.sr-item:hover{background:var(--gray-50)}
-.sr-title{font-weight:600;color:var(--gray-800);margin-bottom:3px}
-.sr-meta{font-size:12px;color:var(--gray-400)}
-.empty-state{text-align:center;padding:50px 20px;color:var(--gray-400)}
-.empty-icon{margin-bottom:12px;display:flex;justify-content:center;color:var(--gray-300)}
-/* Mention autocomplete */
-.mention-dropdown{position:absolute;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);box-shadow:var(--shadow);z-index:500;min-width:160px;max-height:160px;overflow-y:auto}
-.mention-item{padding:7px 12px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:8px}
-.mention-item:hover{background:var(--blue-light)}
-/* Lightbox */
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;display:flex;align-items:center;justify-content:center;cursor:zoom-out}
-.lightbox img{max-width:90vw;max-height:90vh;border-radius:6px}
-/* Topic header */
-.topic-header-box{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow-sm)}
-.topic-header-title{font-size:22px;font-weight:800;color:var(--gray-800);margin-bottom:8px}
-.topic-header-meta{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--gray-500);flex-wrap:wrap}
-.topic-admin-bar{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-100);flex-wrap:wrap}
-/* Toasts */
-.toast-container{position:fixed;bottom:24px;left:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
-.toast{padding:11px 18px;border-radius:var(--radius);font-size:14px;font-weight:500;color:#fff;box-shadow:var(--shadow);animation:slideUp .2s ease;display:flex;align-items:center;gap:8px;max-width:300px}
-.toast-success{background:#27ae60}.toast-error{background:var(--red)}.toast-info{background:var(--blue)}
-@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--gray-400);gap:10px}
-.spinner{width:22px;height:22px;border:2px solid var(--gray-200);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.top{background:var(--w);border-bottom:1px solid var(--g200);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;gap:16px}
+.logo{font-size:22px;font-weight:900;color:var(--blue);cursor:pointer;user-select:none}
+.logo span{color:var(--g700)}
+.srch{position:relative;flex:0 0 300px}
+.srch input{width:100%;padding:7px 36px 7px 12px;border:1px solid var(--g200);border-radius:20px;background:var(--g50);font-size:14px;outline:none;transition:border .15s}
+.srch input:focus{border-color:var(--blue);background:var(--w)}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--g400)}
+.tact{display:flex;align-items:center;gap:10px}
+.btn{padding:7px 16px;border-radius:var(--r);border:none;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.bp{background:var(--blue);color:#fff}.bp:hover{background:var(--bd)}
+.bs{background:var(--g100);color:var(--g700);border:1px solid var(--g200)}.bs:hover{background:var(--g200)}
+.bd{background:var(--red);color:#fff}.bd:hover{background:#a93226}
+.bg{background:none;border:1px solid var(--g200);color:var(--g600)}.bg:hover{background:var(--g50)}
+.bsm{padding:4px 10px;font-size:13px}
+.pg{display:none;flex:1;padding:24px;flex-direction:column;gap:20px;max-width:960px;width:100%;margin:0 auto}
+.pg.on{display:flex}
+.bc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--g500)}
+.bcl{cursor:pointer;color:var(--blue)}.bcl:hover{text-decoration:underline}
+.sep{color:var(--g300)}
+.ban{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:18px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh)}
+.ban-t{font-size:17px;font-weight:700}
+.catb{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.cath{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-bottom:1px solid var(--g100)}
+.cattt{font-size:17px;font-weight:700;display:flex;align-items:center;gap:10px}
+.catm{display:flex;align-items:center;gap:10px}
+.stb{background:var(--g50);border:1px solid var(--g200);padding:5px 10px;border-radius:var(--r);text-align:center;min-width:60px}
+.stn{font-size:14px;font-weight:700;color:var(--g700)}.stl{font-size:11px;color:var(--g400)}
+.catbody{padding:10px 22px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 28px}
+.fl{display:flex;align-items:center;gap:7px;padding:7px 0;color:var(--g700);font-size:14px;font-weight:500;border-bottom:1px solid var(--g100);cursor:pointer;transition:.1s}
+.fl:hover{color:var(--blue)}
+.fls{margin-right:auto;font-size:12px;color:var(--g400)}
+.abar{background:linear-gradient(135deg,#fff9e6,#fff3cc);border:1px solid #f0d060;border-radius:var(--r);padding:9px 16px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.abadge{background:#f0d060;color:#7a5c00;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+.fhb{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--sh);gap:12px}
+.tt{width:100%;border-collapse:collapse;background:var(--w);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);border:1px solid var(--g200)}
+.tt th{background:var(--g50);padding:9px 14px;font-size:13px;font-weight:600;color:var(--g500);text-align:right;border-bottom:1px solid var(--g200)}
+.tt td{padding:11px 14px;border-bottom:1px solid var(--g100);vertical-align:middle}
+.tt tr:last-child td{border-bottom:none}
+.tt tr:hover td{background:var(--g50)}
+.ttl{font-weight:600;color:var(--g800);cursor:pointer}.ttl:hover{color:var(--blue)}
+.tbdg{display:flex;gap:4px;margin-top:3px}
+.tb{font-size:11px;padding:1px 7px;border-radius:20px;font-weight:600}
+.tp{background:#e8f4fd;color:#1a6fa3}.tl{background:#fdf0e8;color:#c0622b}.tn{background:#e8f9ee;color:#1a6f3f}
+.tmet{font-size:12px;color:var(--g400);margin-top:2px}
+.tst{text-align:center;font-size:14px;font-weight:600;color:var(--g600)}
+.post{display:flex;background:var(--w);border:1px solid var(--g200);border-radius:var(--r);margin-bottom:11px;overflow:hidden;box-shadow:var(--sh)}
+.psb{width:150px;min-width:150px;background:var(--g50);border-left:1px solid var(--g200);padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+.pav{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;margin-bottom:2px}
+.pav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.pun{font-size:13px;font-weight:700;color:var(--blue);cursor:pointer}.pun:hover{text-decoration:underline}
+.pr{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;display:inline-flex;align-items:center;gap:3px}
+.ra{background:#fff0c2;color:#7a5000}.rm{background:var(--g100);color:var(--g500)}.rb{background:#fde8e8;color:#a00}
+.prep{font-size:11px;color:var(--g500)}.pcnt{font-size:11px;color:var(--g400)}
+.pb{flex:1;padding:14px 18px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.ph{display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid var(--g100)}
+.pt{font-size:12px;color:var(--g400)}.pn{font-size:12px;color:var(--g300)}
+.pc{font-size:15px;line-height:1.75;color:var(--g700);word-break:break-word}
+.pc strong{font-weight:700}.pc em{font-style:italic}.pc u{text-decoration:underline}.pc s{text-decoration:line-through}
+.pc hr{border:none;border-top:2px solid var(--g200);margin:10px 0}
+.pc img{max-width:100%;border-radius:6px;margin:5px 0;cursor:zoom-in;display:block}
+.spl{border:1px solid var(--g200);border-radius:var(--r);overflow:hidden;margin:5px 0}
+.sptg{display:flex;align-items:center;gap:7px;padding:7px 12px;background:var(--g50);cursor:pointer;font-size:13px;font-weight:600;color:var(--g600);border:none;width:100%;text-align:right}
+.sptg:hover{background:var(--g100)}
+.sptg svg{transition:transform .2s}.sptg.on svg{transform:rotate(90deg)}
+.spb{padding:10px 14px;font-size:14px;color:var(--g700);display:none;border-top:1px solid var(--g200)}
+.spb.on{display:block}
+.ht{filter:blur(5px);transition:filter .3s;cursor:pointer;user-select:none;border-radius:3px}
+.ht:hover{filter:blur(0)}
+.pq{background:var(--g50);border-right:3px solid var(--blue);padding:9px 13px;border-radius:4px;margin-bottom:9px;font-size:13px}
+.pqa{font-weight:600;color:var(--blue);font-size:12px;margin-bottom:3px}
+.pqt{color:var(--g600);overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.pdel{color:var(--g400);font-style:italic;font-size:14px;background:var(--g50);padding:11px;border-radius:4px;border-right:3px solid var(--g300)}
+.pf{display:flex;align-items:center;gap:6px;padding-top:9px;border-top:1px solid var(--g100);flex-wrap:wrap}
+.ped{font-size:11px;color:var(--g400);font-style:italic;margin-right:auto}
+.rw{position:relative;display:inline-flex}
+.rb2{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:20px;border:1px solid var(--g200);background:var(--w);font-size:13px;font-weight:600;cursor:pointer;transition:.15s;color:var(--g600)}
+.rb2:hover{border-color:var(--blue);color:var(--blue)}
+.rb2.lk{background:#e8f4fd;border-color:#1a6fa3;color:#1a6fa3}
+.rb2.dl{background:#fdf0e8;border-color:#c0622b;color:#c0622b}
+.rtt{position:absolute;bottom:calc(100% + 5px);right:0;background:var(--g800);color:#fff;border-radius:5px;padding:5px 9px;font-size:12px;white-space:nowrap;z-index:200;display:none;max-width:200px;word-break:break-all}
+.rw:hover .rtt{display:block}
+.ab2{padding:4px 8px;border:1px solid var(--g200);background:none;border-radius:4px;font-size:12px;color:var(--g500);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:.1s}
+.ab2:hover{background:var(--g50);color:var(--blue)}
+.ew{border:1px solid var(--g200);border-radius:var(--r);overflow:hidden;background:var(--w)}
+.ew:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,89,169,.1)}
+.etb{display:flex;align-items:center;gap:2px;padding:5px 7px;background:var(--g50);border-bottom:1px solid var(--g200);flex-wrap:wrap}
+.etbb{height:27px;min-width:27px;border:none;background:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--g600);font-size:12px;font-weight:700;padding:0 5px;transition:.1s}
+.etbb:hover{background:var(--g200);color:var(--blue)}
+.ets{width:1px;height:17px;background:var(--g200);margin:0 3px}
+.eta{width:100%;min-height:120px;padding:11px;border:none;outline:none;font-size:14px;resize:vertical;line-height:1.65;background:var(--w)}
+.eft{padding:6px 9px;background:var(--g50);border-top:1px solid var(--g200);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.iml{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border:1px solid var(--g200);border-radius:4px;font-size:12px;color:var(--g600);cursor:pointer;transition:.1s}
+.iml:hover{background:var(--g200)}.iml input{display:none}
+.iuw{display:flex;gap:5px;align-items:center;flex:1}
+.iui{flex:1;padding:4px 8px;border:1px solid var(--g200);border-radius:4px;font-size:12px;outline:none}
+.iui:focus{border-color:var(--blue)}
+.upg{font-size:12px;color:var(--blue)}
+.mdd{position:absolute;background:var(--w);border:1px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh2);z-index:500;min-width:150px;max-height:150px;overflow-y:auto;display:none}
+.mdi{padding:7px 11px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:7px}
+.mdi:hover{background:var(--bl)}
+.rbox{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.rbt{font-size:15px;font-weight:700;margin-bottom:11px;color:var(--g700)}
+.qpv{background:var(--g50);border-right:3px solid var(--blue);padding:9px 13px;border-radius:4px;margin-bottom:9px;font-size:13px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.qpc{background:none;border:none;cursor:pointer;color:var(--g400);padding:0;display:flex}
+.npb{background:#e8f4fd;border:1px solid #9dc6e8;border-radius:var(--r);padding:9px 16px;display:flex;align-items:center;gap:9px;font-size:14px;color:#1a5a9a;cursor:pointer}
+.npb:hover{background:#d0e8f5}
+.pag{display:flex;gap:4px;align-items:center;justify-content:center}
+.pgb{width:34px;height:34px;border-radius:var(--r);border:1px solid var(--g200);background:var(--w);cursor:pointer;font-size:14px;font-weight:600;color:var(--g600);transition:.15s;display:flex;align-items:center;justify-content:center}
+.pgb:hover,.pgb.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pgb:disabled{opacity:.4;cursor:not-allowed}
+.profh{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:22px;display:flex;gap:22px;align-items:flex-start;box-shadow:var(--sh)}
+.profav{width:78px;height:78px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.profav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profn{font-size:21px;font-weight:800}
+.profs{display:flex;gap:18px;margin-top:9px}
+.profsn{font-size:17px;font-weight:800;color:var(--blue)}.profsl{font-size:12px;color:var(--g400)}
+.tabs{display:flex;border-bottom:2px solid var(--g200);margin-bottom:14px}
+.tabb{padding:8px 18px;border:none;background:none;font-size:14px;font-weight:600;color:var(--g500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s}
+.tabb.on{color:var(--blue);border-bottom-color:var(--blue)}
+.tabc{display:none}.tabc.on{display:block}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.mo.hid{display:none}
+.md{background:var(--w);border-radius:10px;padding:26px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:90vh;overflow-y:auto}
+.mdw{max-width:620px}
+.mdt{font-size:17px;font-weight:800;margin-bottom:16px;color:var(--g800)}
+.mdc{position:absolute;top:14px;left:14px;background:none;border:none;cursor:pointer;color:var(--g400);padding:4px;display:flex}
+.mdc:hover{color:var(--g700)}
+.mda{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.fg{margin-bottom:13px}
+.fl2{display:block;font-size:13px;font-weight:600;color:var(--g600);margin-bottom:4px}
+.fi{width:100%;padding:8px 11px;border:1px solid var(--g200);border-radius:var(--r);font-size:14px;outline:none;transition:.15s}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,89,169,.1)}
+.fta{width:100%;padding:8px 11px;border:1px solid var(--g200);border-radius:var(--r);font-size:14px;outline:none;resize:vertical;min-height:75px}
+.fta:focus{border-color:var(--blue)}
+.fe{font-size:13px;color:var(--red);margin-top:4px;display:none}
+.tgr{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--g100)}
+.tgl{font-size:14px;color:var(--g700);font-weight:500}.tgd{font-size:12px;color:var(--g400);margin-top:2px}
+.tg{position:relative;width:40px;height:22px;display:inline-block}
+.tg input{opacity:0;width:0;height:0;position:absolute}
+.tgs{position:absolute;cursor:pointer;inset:0;background:var(--g300);border-radius:22px;transition:.2s}
+.tgs:before{content:"";position:absolute;width:16px;height:16px;right:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.tg input:checked+.tgs{background:var(--blue)}
+.tg input:checked+.tgs:before{transform:translateX(-18px)}
+.ur{display:flex;align-items:center;gap:11px;padding:11px 15px;border-bottom:1px solid var(--g100);font-size:14px}
+.ur:last-child{border-bottom:none}.ur:hover{background:var(--g50)}
+.srs{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.sri{padding:13px 18px;border-bottom:1px solid var(--g100);cursor:pointer;transition:.1s}
+.sri:last-child{border-bottom:none}.sri:hover{background:var(--g50)}
+.srt{font-weight:600;color:var(--g800);margin-bottom:2px}
+.srm{font-size:12px;color:var(--g400)}
+.ni{padding:11px 15px;border-bottom:1px solid var(--g100);cursor:pointer;font-size:13px;transition:.1s}
+.ni:hover{background:var(--g50)}.ni.unr{background:#f0f6ff}
+.nit{font-weight:600;color:var(--g800);margin-bottom:2px}
+.nis{color:var(--g500);font-size:12px}
+.thb{background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:18px 22px;box-shadow:var(--sh)}
+.tht{font-size:21px;font-weight:800;color:var(--g800);margin-bottom:7px}
+.thm{display:flex;align-items:center;gap:13px;font-size:13px;color:var(--g500);flex-wrap:wrap}
+.tab2{display:flex;gap:8px;margin-top:11px;padding-top:11px;border-top:1px solid var(--g100);flex-wrap:wrap}
+.es{text-align:center;padding:45px 20px;color:var(--g400)}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;display:flex;align-items:center;justify-content:center;cursor:zoom-out}
+.lb img{max-width:90vw;max-height:90vh;border-radius:6px}
+.tc{position:fixed;bottom:22px;left:22px;z-index:9999;display:flex;flex-direction:column;gap:7px}
+.toast{padding:10px 16px;border-radius:var(--r);font-size:14px;font-weight:500;color:#fff;box-shadow:var(--sh2);animation:su .2s ease;display:flex;align-items:center;gap:7px;max-width:290px}
+.ts{background:#27ae60}.te{background:var(--red)}.ti{background:var(--blue)}
+@keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.ld{display:flex;align-items:center;justify-content:center;padding:38px;color:var(--g400);gap:9px}
+.sp{width:21px;height:21px;border:2px solid var(--g200);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:768px){.post-sidebar{width:90px;min-width:90px}.forum-grid{grid-template-columns:1fr}.topbar-search{display:none}}
+@media(max-width:768px){.psb{width:85px;min-width:85px}.fgrid{grid-template-columns:1fr}.srch{display:none}}
 </style>
 </head>
 <body>
 <div class="app">
-<!-- Right Sidebar -->
-<div class="sidebar">
-  <div class="sidebar-btn active" onclick="goHome()" title="בית"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-  <div class="sidebar-btn" onclick="showPage('search-page')" title="חיפוש"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-  <div class="sidebar-btn" onclick="showPage('latest-page')" title="אחרונים"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-  <div class="sidebar-btn" onclick="showPage('popular-page')" title="פופולרי"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-  <div class="sidebar-btn" onclick="goMyProfile()" title="פרופיל"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-  <div class="sidebar-btn" onclick="showGoogleLogin()" title="כניסה"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></div>
+<div class="sb">
+  <button class="sbb on" onclick="goHome()" title="בית"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+  <button class="sbb" onclick="showPage('search-page')" title="חיפוש"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+  <button class="sbb" onclick="showPage('latest-page')" title="אחרונים"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+  <button class="sbb" onclick="showPage('popular-page')" title="פופולרי"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></button>
+  <button class="sbb" onclick="goMyProfile()" title="פרופיל"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
 </div>
-
 <div class="main">
-  <div class="topbar">
-    <div class="topbar-logo" onclick="goHome()">TOP <span>פורום</span></div>
-    <div class="topbar-search">
-      <input type="text" placeholder="חיפוש..." onkeydown="if(event.key==='Enter')doSearch(this.value)">
-      <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-    </div>
-    <div class="topbar-actions">
-      <div id="user-topbar" style="display:none;align-items:center;gap:10px">
-        <div id="user-topbar-avatar" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;cursor:pointer;overflow:hidden;flex-shrink:0"></div>
-        <span id="user-topbar-name" style="font-weight:600;font-size:14px;cursor:pointer;color:var(--gray-700)"></span>
-        <button class="btn btn-secondary btn-sm" onclick="logout()">יציאה</button>
+  <div class="top">
+    <div class="logo" onclick="goHome()">TOP <span>פורום</span></div>
+    <div class="srch"><input type="text" placeholder="חיפוש..." onkeydown="if(event.key==='Enter')doSearch(this.value)"><span class="si"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span></div>
+    <div class="tact">
+      <div id="utop" style="display:none;align-items:center;gap:9px">
+        <div id="utav" style="width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;cursor:pointer;overflow:hidden;flex-shrink:0"></div>
+        <span id="utnm" style="font-weight:600;font-size:14px;cursor:pointer;color:var(--g700)"></span>
+        <button class="btn bs bsm" onclick="logout()">יציאה</button>
       </div>
-      <button id="login-btn-top" class="btn btn-primary" onclick="showGoogleLogin()">כניסה עם Google</button>
+      <button id="lbtn" class="btn bp" onclick="showLogin()">כניסה עם Google</button>
     </div>
   </div>
-
   <div style="flex:1;display:flex;flex-direction:column;min-width:0">
-    <!-- Home -->
-    <div id="home-page" class="page active">
-      <div id="home-banner" class="banner"><div><div class="banner-title">ברוכים הבאים לפורום TOP</div></div></div>
-      <div id="admin-bar-home" class="admin-bar" style="display:none">
-        <span class="admin-badge">מנהל</span>
-        <button class="btn btn-sm btn-secondary" onclick="openModal('create-cat-modal')">+ קטגוריה</button>
-        <button class="btn btn-sm btn-secondary" onclick="showUsersPage()">משתמשים</button>
-        <button class="btn btn-sm btn-secondary" onclick="showAdminSettings()">הגדרות</button>
+    <div id="home-page" class="pg on">
+      <div class="ban"><div class="ban-t">ברוכים הבאים לפורום TOP</div></div>
+      <div id="abar" class="abar" style="display:none">
+        <span class="abadge">מנהל</span>
+        <button class="btn bs bsm" onclick="openModal('ccat-modal')">+ קטגוריה</button>
+        <button class="btn bs bsm" onclick="showUsers()">משתמשים</button>
+        <button class="btn bs bsm" onclick="showAdminSettings()">הגדרות</button>
       </div>
-      <div id="categories-container"><div class="loading"><div class="spinner"></div> טוען...</div></div>
+      <div id="cats-c"><div class="ld"><div class="sp"></div> טוען...</div></div>
     </div>
-    <!-- Forum -->
-    <div id="forum-page" class="page">
-      <div id="forum-breadcrumb" class="breadcrumb"></div>
-      <div id="forum-header-bar" class="forum-header-bar" style="display:none">
-        <div><div id="forum-banner-title" style="font-size:17px;font-weight:700"></div><div id="forum-banner-sub" style="font-size:13px;color:var(--gray-500);margin-top:2px"></div></div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div id="forum-stats-box"></div>
-          <button id="new-topic-btn" class="btn btn-primary" style="display:none" onclick="showCreateTopic()">
+    <div id="forum-page" class="pg">
+      <div id="fbread" class="bc"></div>
+      <div id="fhb" class="fhb" style="display:none">
+        <div><div id="fbt" style="font-size:16px;font-weight:700"></div><div id="fbs" style="font-size:13px;color:var(--g500);margin-top:2px"></div></div>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div id="fstat"></div>
+          <button id="ntbtn" class="btn bp" style="display:none" onclick="showCreateTopic()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> נושא חדש
           </button>
         </div>
       </div>
-      <div id="forum-admin-bar" class="admin-bar" style="display:none"></div>
-      <div id="topics-container"></div>
-      <div id="topics-pagination" class="pagination" style="margin-top:8px"></div>
+      <div id="fabar" class="abar" style="display:none"></div>
+      <div id="topics-c"></div>
+      <div id="topics-pag" class="pag" style="margin-top:7px"></div>
     </div>
-    <!-- Topic -->
-    <div id="topic-page" class="page page-wide">
-      <div id="topic-breadcrumb" class="breadcrumb"></div>
-      <div id="new-posts-bar" style="display:none" class="new-posts-bar" onclick="refreshTopic()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-        <span id="new-posts-text">יש הודעות חדשות — לחץ לרענון</span>
+    <div id="topic-page" class="pg" style="max-width:900px">
+      <div id="tbread" class="bc"></div>
+      <div id="new-posts-bar" style="display:none" class="npb" onclick="refreshTopic()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        <span id="npbt">יש הודעות חדשות — לחץ לרענון</span>
       </div>
-      <div id="topic-header"></div>
-      <div id="posts-container"></div>
-      <div id="posts-pagination" class="pagination" style="margin:8px 0"></div>
-      <div id="reply-box-container"></div>
+      <div id="topic-h"></div>
+      <div id="posts-c"></div>
+      <div id="posts-pag" class="pag" style="margin:7px 0"></div>
+      <div id="reply-c"></div>
     </div>
-    <!-- Profile -->
-    <div id="profile-page" class="page"><div id="profile-content"></div></div>
-    <!-- Search -->
-    <div id="search-page" class="page">
-      <div class="banner"><div class="banner-title">חיפוש</div></div>
-      <div style="display:flex;gap:8px"><input type="text" id="search-main-input" class="form-input" placeholder="חיפוש..."><button class="btn btn-primary" onclick="doSearchMain()">חפש</button></div>
-      <div id="search-results-container"></div>
+    <div id="profile-page" class="pg"><div id="prof-c"></div></div>
+    <div id="search-page" class="pg">
+      <div class="ban"><div class="ban-t">חיפוש</div></div>
+      <div style="display:flex;gap:8px"><input type="text" id="srch-inp" class="fi" placeholder="חיפוש..."><button class="btn bp" onclick="doSearchMain()">חפש</button></div>
+      <div id="srch-c"></div>
     </div>
-    <!-- Latest -->
-    <div id="latest-page" class="page"><div class="banner"><div class="banner-title">פוסטים אחרונים</div></div><div id="latest-container"></div></div>
-    <!-- Popular -->
-    <div id="popular-page" class="page"><div class="banner"><div class="banner-title">הנושאים הפופולריים</div></div><div id="popular-container"></div></div>
-    <!-- Notifications -->
-    <div id="notifications-page" class="page">
-      <div class="banner"><div class="banner-title">התראות</div></div>
-      <div id="notif-list"></div>
-    </div>
-    <!-- Admin Settings -->
-    <div id="admin-settings-page" class="page">
-      <div class="banner"><div class="banner-title">הגדרות מנהל</div></div>
-      <div id="admin-settings-content"></div>
-    </div>
+    <div id="latest-page" class="pg"><div class="ban"><div class="ban-t">פוסטים אחרונים</div></div><div id="latest-c"></div></div>
+    <div id="popular-page" class="pg"><div class="ban"><div class="ban-t">הנושאים הפופולריים</div></div><div id="popular-c"></div></div>
+    <div id="notifications-page" class="pg"><div class="ban"><div class="ban-t">התראות</div></div><div id="notif-c"></div></div>
+    <div id="admin-settings-page" class="pg"><div class="ban"><div class="ban-t">הגדרות מנהל</div></div><div id="as-c"></div></div>
   </div>
 </div>
-
-<!-- Left Sidebar -->
-<div class="sidebar sidebar-left">
-  <div class="sidebar-btn" onclick="showPage('latest-page')" title="אחרונים"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-  <div class="sidebar-btn" onclick="showPage('search-page')" title="חיפוש"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-  <div id="notif-sidebar-btn" class="sidebar-btn" style="display:none" onclick="showNotifications()" title="התראות">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-    <span id="notif-badge" class="notif-badge" style="display:none">0</span>
-  </div>
-  <div id="admin-users-btn" class="sidebar-btn" style="display:none" onclick="showUsersPage()" title="משתמשים"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+<div class="sb sbl">
+  <button class="sbb" onclick="showPage('latest-page')" title="אחרונים"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+  <button class="sbb" onclick="showPage('search-page')" title="חיפוש"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+  <button id="notif-btn" class="sbb" style="display:none" onclick="showPage('notifications-page')" title="התראות">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    <span id="nbadge" class="nbadge" style="display:none"></span>
+  </button>
+  <button id="adm-btn" class="sbb" style="display:none" onclick="showUsers()" title="משתמשים"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></button>
 </div>
 </div>
 
 <!-- Modals -->
-<div id="login-modal" class="modal-overlay hidden">
-  <div class="modal" style="max-width:400px">
-    <button class="modal-close" onclick="closeModal('login-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div id="login-modal-content">
-      <div class="modal-title">כניסה לפורום</div>
-      <p style="font-size:14px;color:var(--gray-500);margin-bottom:24px">התחבר עם חשבון Google שלך</p>
-      <div id="google-btn-container" style="display:flex;justify-content:center"></div>
-      <div id="login-error" class="form-error" style="margin-top:12px;text-align:center"></div>
-    </div>
-    <div id="register-form" style="display:none">
-      <div class="modal-title">בחר שם משתמש</div>
-      <p style="font-size:14px;color:var(--gray-500);margin-bottom:16px">שלום <strong id="reg-google-name"></strong>!</p>
-      <div class="form-group"><label class="form-label">שם משתמש</label><input type="text" id="reg-username" class="form-input" placeholder="2-30 תווים" maxlength="30"></div>
-      <div id="reg-error" class="form-error"></div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" onclick="document.getElementById('register-form').style.display='none';document.getElementById('login-modal-content').style.display='block'">חזרה</button>
-        <button class="btn btn-primary" onclick="doRegister()">הצטרף</button>
-      </div>
+<div id="login-modal" class="mo hid"><div class="md" style="max-width:380px">
+  <button class="mdc" onclick="closeModal('login-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div id="lmc">
+    <div class="mdt">כניסה לפורום</div>
+    <p style="font-size:14px;color:var(--g500);margin-bottom:22px">התחבר עם חשבון Google שלך</p>
+    <div id="gbtn" style="display:flex;justify-content:center"></div>
+    <div id="lerr" class="fe" style="margin-top:11px;text-align:center"></div>
+  </div>
+  <div id="regf" style="display:none">
+    <div class="mdt">בחר שם משתמש</div>
+    <p style="font-size:14px;color:var(--g500);margin-bottom:14px">שלום <strong id="rgnm"></strong>!</p>
+    <div class="fg"><label class="fl2">שם משתמש</label><input type="text" id="rgu" class="fi" placeholder="2-30 תווים" maxlength="30"></div>
+    <div id="rgerr" class="fe"></div>
+    <div class="mda">
+      <button class="btn bs" onclick="document.getElementById('regf').style.display='none';document.getElementById('lmc').style.display='block'">חזרה</button>
+      <button class="btn bp" onclick="doRegister()">הצטרף</button>
     </div>
   </div>
-</div>
+</div></div>
 
-<div id="create-cat-modal" class="modal-overlay hidden">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('create-cat-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div class="modal-title">קטגוריה חדשה</div>
-    <div class="form-group"><label class="form-label">שם</label><input type="text" id="cat-name" class="form-input"></div>
-    <div class="form-group"><label class="form-label">תיאור</label><input type="text" id="cat-desc" class="form-input"></div>
-    <div class="form-group"><label class="form-label">צבע</label><input type="color" id="cat-color" value="#0059a9" style="height:36px;width:80px;border:1px solid var(--gray-200);border-radius:4px;padding:2px"></div>
-    <div id="cat-error" class="form-error"></div>
-    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('create-cat-modal')">ביטול</button><button class="btn btn-primary" onclick="submitCreateCategory()">צור</button></div>
+<div id="ccat-modal" class="mo hid"><div class="md">
+  <button class="mdc" onclick="closeModal('ccat-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mdt">קטגוריה חדשה</div>
+  <div class="fg"><label class="fl2">שם</label><input type="text" id="cat-nm" class="fi"></div>
+  <div class="fg"><label class="fl2">תיאור</label><input type="text" id="cat-ds" class="fi"></div>
+  <div class="fg"><label class="fl2">צבע</label><input type="color" id="cat-cl" value="#0059a9" style="height:34px;width:75px;border:1px solid var(--g200);border-radius:4px;padding:2px"></div>
+  <div id="cat-err" class="fe"></div>
+  <div class="mda"><button class="btn bs" onclick="closeModal('ccat-modal')">ביטול</button><button class="btn bp" onclick="submitCat()">צור</button></div>
+</div></div>
+
+<div id="cforum-modal" class="mo hid"><div class="md">
+  <button class="mdc" onclick="closeModal('cforum-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mdt">פורום חדש</div>
+  <div class="fg"><label class="fl2">שם</label><input type="text" id="for-nm" class="fi"></div>
+  <div class="fg"><label class="fl2">תיאור</label><input type="text" id="for-ds" class="fi"></div>
+  <div id="for-err" class="fe"></div>
+  <div class="mda"><button class="btn bs" onclick="closeModal('cforum-modal')">ביטול</button><button class="btn bp" onclick="submitForum()">צור</button></div>
+</div></div>
+
+<div id="eforum-modal" class="mo hid"><div class="md">
+  <button class="mdc" onclick="closeModal('eforum-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mdt">עריכת פורום</div>
+  <div class="fg"><label class="fl2">שם</label><input type="text" id="ef-nm" class="fi"></div>
+  <div class="fg"><label class="fl2">תיאור</label><input type="text" id="ef-ds" class="fi"></div>
+  <div class="mda"><button class="btn bs" onclick="closeModal('eforum-modal')">ביטול</button><button class="btn bp" onclick="submitEForum()">שמור</button></div>
+</div></div>
+
+<div id="epost-modal" class="mo hid"><div class="md mdw">
+  <button class="mdc" onclick="closeModal('epost-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mdt">עריכת הודעה</div>
+  <input type="hidden" id="ep-id">
+  <div id="ep-wrap"></div>
+  <div class="mda"><button class="btn bs" onclick="closeModal('epost-modal')">ביטול</button><button class="btn bp" onclick="submitEPost()">שמור</button></div>
+</div></div>
+
+<div id="eprof-modal" class="mo hid"><div class="md">
+  <button class="mdc" onclick="closeModal('eprof-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mdt">עריכת פרופיל</div>
+  <div class="fg"><label class="fl2">שם משתמש</label><input type="text" id="ep-un" class="fi" maxlength="30"></div>
+  <div class="fg"><label class="fl2">ביוגרפיה</label><textarea id="ep-bio" class="fta" maxlength="500"></textarea></div>
+  <div class="fg"><label class="fl2">תמונת פרופיל (URL)</label><input type="text" id="ep-av" class="fi" placeholder="https://..."></div>
+  <div class="tgr">
+    <div><div class="tgl">הצג מייל בפרופיל</div><div class="tgd">כשכבוי — המייל נשאר פרטי לחלוטין</div></div>
+    <label class="tg"><input type="checkbox" id="ep-se"><span class="tgs"></span></label>
   </div>
-</div>
+  <div id="ep-err" class="fe"></div>
+  <div class="mda"><button class="btn bs" onclick="closeModal('eprof-modal')">ביטול</button><button class="btn bp" onclick="submitEProf()">שמור</button></div>
+</div></div>
 
-<div id="create-forum-modal" class="modal-overlay hidden">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('create-forum-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div class="modal-title">פורום חדש</div>
-    <div class="form-group"><label class="form-label">שם</label><input type="text" id="forum-name-input" class="form-input"></div>
-    <div class="form-group"><label class="form-label">תיאור</label><input type="text" id="forum-desc-input" class="form-input"></div>
-    <div id="forum-create-error" class="form-error"></div>
-    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('create-forum-modal')">ביטול</button><button class="btn btn-primary" onclick="submitCreateForum()">צור</button></div>
-  </div>
-</div>
+<div id="users-modal" class="mo hid"><div class="md mdw">
+  <button class="mdc" onclick="closeModal('users-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mdt">ניהול משתמשים</div>
+  <div id="users-c"></div>
+</div></div>
 
-<div id="edit-forum-modal" class="modal-overlay hidden">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('edit-forum-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div class="modal-title">עריכת פורום</div>
-    <div class="form-group"><label class="form-label">שם</label><input type="text" id="edit-forum-name" class="form-input"></div>
-    <div class="form-group"><label class="form-label">תיאור</label><input type="text" id="edit-forum-desc" class="form-input"></div>
-    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('edit-forum-modal')">ביטול</button><button class="btn btn-primary" onclick="submitEditForum()">שמור</button></div>
-  </div>
-</div>
+<div id="restr-modal" class="mo hid"><div class="md mdw">
+  <button class="mdc" onclick="closeModal('restr-modal')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <div class="mdt">הגבלת פרסום</div>
+  <div id="restr-c"></div>
+  <div class="mda"><button class="btn bs" onclick="closeModal('restr-modal')">ביטול</button><button class="btn bp" onclick="submitRestr()">שמור</button></div>
+</div></div>
 
-<div id="edit-post-modal" class="modal-overlay hidden">
-  <div class="modal modal-wide">
-    <button class="modal-close" onclick="closeModal('edit-post-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div class="modal-title">עריכת הודעה</div>
-    <input type="hidden" id="edit-post-id">
-    <div id="edit-post-editor-wrap"></div>
-    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('edit-post-modal')">ביטול</button><button class="btn btn-primary" onclick="submitEditPost()">שמור</button></div>
-  </div>
-</div>
-
-<div id="edit-profile-modal" class="modal-overlay hidden">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('edit-profile-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div class="modal-title">עריכת פרופיל</div>
-    <div class="form-group"><label class="form-label">שם משתמש</label><input type="text" id="edit-username" class="form-input" maxlength="30"></div>
-    <div class="form-group"><label class="form-label">ביוגרפיה</label><textarea id="edit-bio" class="form-textarea" maxlength="500"></textarea></div>
-    <div class="form-group"><label class="form-label">תמונת פרופיל (URL)</label><input type="text" id="edit-avatar-url" class="form-input" placeholder="https://..."></div>
-    <div class="toggle-row">
-      <div><div class="toggle-label">הצג מייל בפרופיל</div><div class="toggle-desc">כשכבוי — המייל נשאר פרטי לחלוטין</div></div>
-      <label class="toggle"><input type="checkbox" id="edit-show-email"><span class="toggle-slider"></span></label>
-    </div>
-    <div id="edit-profile-error" class="form-error"></div>
-    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('edit-profile-modal')">ביטול</button><button class="btn btn-primary" onclick="submitEditProfile()">שמור</button></div>
-  </div>
-</div>
-
-<div id="users-modal" class="modal-overlay hidden">
-  <div class="modal modal-wide">
-    <button class="modal-close" onclick="closeModal('users-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div class="modal-title">ניהול משתמשים</div>
-    <div id="users-list-content"></div>
-  </div>
-</div>
-
-<div id="restrict-modal" class="modal-overlay hidden">
-  <div class="modal modal-wide">
-    <button class="modal-close" onclick="closeModal('restrict-modal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    <div class="modal-title">הגבלת פרסום</div>
-    <div id="restrict-content"></div>
-    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('restrict-modal')">ביטול</button><button class="btn btn-primary" onclick="submitRestrictions()">שמור</button></div>
-  </div>
-</div>
-
-<div class="toast-container" id="toast-container"></div>
+<div class="tc" id="tc"></div>
 
 <script>
-const API_BASE = "https://woww.pythonanywhere.com";
-const GOOGLE_CLIENT_ID = "1087997271039-b8l9oi9mcut6vkp9trdmobgm78fgolme.apps.googleusercontent.com";
-const IMGUR_CLIENT_ID = "546c25a59c58ad7";
+const API="https://woww.pythonanywhere.com";
+const GCI="1087997271039-b8l9oi9mcut6vkp9trdmobgm78fgolme.apps.googleusercontent.com";
+const IMGUR="546c25a59c58ad7";
 
-let currentUser=null, currentPage='home-page';
-let currentForumId=null, currentTopicId=null, currentCategoryId=null;
-let currentTopicPage=1, currentForumPage=1;
-let allCategories=[], allForums=[];
-let quotePostData=null, editingForumData=null, pendingGoogleData=null;
-let pollTimer=null, lastPostTime=null, siteSettings={};
-let restrictingUserId=null;
+let CU=null,CP='home-page',CFI=null,CTI=null,CCI=null,CTP=1,CFP=1;
+let allCats=[],allForums=[],allUsers=[],quoteData=null,eForumData=null,pendingG=null;
+let pollT=null,lastPT=null,restrUID=null,cForumCatId=null;
 
-// ══════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════
-window.onload = async () => {
-  loadSession();
-  initGoogleSignIn();
-  await loadHome();
-  if (currentUser) {
-    loadNotifications();
-    setInterval(loadNotifications, 30000);
-  }
-};
+window.onload=async()=>{loadSess();initG();await loadHome();if(CU){loadNotifs();setInterval(loadNotifs,30000);}};
 
-function initGoogleSignIn() {
-  if (typeof google==='undefined') { setTimeout(initGoogleSignIn,300); return; }
-  google.accounts.id.initialize({ client_id:GOOGLE_CLIENT_ID, callback:handleGoogleCredential, auto_select:false });
+function initG(){if(typeof google==='undefined'){setTimeout(initG,300);return;}google.accounts.id.initialize({client_id:GCI,callback:handleG,auto_select:false});}
+function renderGBtn(){if(typeof google==='undefined')return;google.accounts.id.renderButton(document.getElementById('gbtn'),{theme:'outline',size:'large',locale:'he',width:300});}
+
+async function handleG(resp){
+  document.getElementById('lerr').style.display='none';
+  try{
+    const r=await aPost('/auth/google',{id_token:resp.credential});
+    if(r.ok){
+      if(r.data.needs_username){
+        pendingG={id_token:resp.credential,name:r.data.name};
+        document.getElementById('rgnm').textContent=r.data.name||'';
+        document.getElementById('lmc').style.display='none';
+        document.getElementById('regf').style.display='block';
+        document.getElementById('rgu').focus();
+      }else{saveSess(r.data.token,r.data.user);closeModal('login-modal');toast('ברוך הבא, '+r.data.user.username+'!','s');loadHome();loadNotifs();}
+    }else showErr('lerr',r.error||'שגיאה');
+  }catch(e){showErr('lerr','שגיאת רשת');}
 }
-function renderGoogleButton() {
-  if (typeof google==='undefined') return;
-  google.accounts.id.renderButton(document.getElementById('google-btn-container'),
-    { theme:'outline', size:'large', locale:'he', width:320 });
+async function doRegister(){
+  if(!pendingG)return;
+  const u=document.getElementById('rgu').value.trim();
+  if(!u){showErr('rgerr','שם חסר');return;}
+  try{
+    const r=await aPost('/auth/google',{id_token:pendingG.id_token,username:u});
+    if(r.ok){pendingG=null;saveSess(r.data.token,r.data.user);closeModal('login-modal');document.getElementById('regf').style.display='none';document.getElementById('lmc').style.display='block';toast('ברוך הבא, '+r.data.user.username+'!','s');loadHome();loadNotifs();}
+    else showErr('rgerr',r.error);
+  }catch(e){showErr('rgerr','שגיאת רשת');}
 }
-async function handleGoogleCredential(response) {
-  document.getElementById('login-error').style.display='none';
-  try {
-    const res = await apiPost('/auth/google', { id_token:response.credential });
-    if (res.ok) {
-      if (res.data.needs_username) {
-        pendingGoogleData = { id_token:response.credential, name:res.data.name };
-        document.getElementById('reg-google-name').textContent = res.data.name||'';
-        document.getElementById('login-modal-content').style.display='none';
-        document.getElementById('register-form').style.display='block';
-        document.getElementById('reg-username').focus();
-      } else {
-        saveSession(res.data.token, res.data.user);
-        closeModal('login-modal');
-        toast('ברוך הבא, '+res.data.user.username+'!','success');
-        loadHome(); loadNotifications();
-      }
-    } else showErr('login-error', res.error||'שגיאה בכניסה');
-  } catch(e) { showErr('login-error','שגיאת רשת'); }
-}
-async function doRegister() {
-  if (!pendingGoogleData) return;
-  const username = document.getElementById('reg-username').value.trim();
-  if (!username) { showErr('reg-error','שם משתמש חסר'); return; }
-  try {
-    const res = await apiPost('/auth/google', { id_token:pendingGoogleData.id_token, username });
-    if (res.ok) {
-      pendingGoogleData=null;
-      saveSession(res.data.token, res.data.user);
-      closeModal('login-modal');
-      document.getElementById('register-form').style.display='none';
-      document.getElementById('login-modal-content').style.display='block';
-      toast('ברוך הבא, '+res.data.user.username+'!','success');
-      loadHome(); loadNotifications();
-    } else showErr('reg-error',res.error);
-  } catch(e) { showErr('reg-error','שגיאת רשת'); }
-}
-function loadSession() {
-  const tok=localStorage.getItem('forum_token'), ud=localStorage.getItem('forum_user');
-  if (tok&&ud) { try { currentUser=JSON.parse(ud); updateUserUI(); } catch(_){} }
-}
-function saveSession(token,user) {
-  localStorage.setItem('forum_token',token);
-  localStorage.setItem('forum_user',JSON.stringify(user));
-  currentUser=user; updateUserUI();
-}
-function logout() {
-  localStorage.removeItem('forum_token'); localStorage.removeItem('forum_user');
-  currentUser=null;
-  if (typeof google!=='undefined') google.accounts.id.disableAutoSelect();
-  updateUserUI(); stopPoll(); goHome(); toast('התנתקת','info');
-}
-function getToken() { return localStorage.getItem('forum_token')||''; }
-function updateUserUI() {
-  const li=!!currentUser;
-  document.getElementById('user-topbar').style.display=li?'flex':'none';
-  document.getElementById('login-btn-top').style.display=li?'none':'';
-  document.getElementById('notif-sidebar-btn').style.display=li?'flex':'none';
-  if (li) {
-    const av=document.getElementById('user-topbar-avatar');
-    if (currentUser.avatar_url) av.innerHTML=`<img src="${escH(currentUser.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-    else { av.textContent=(currentUser.username||'?')[0].toUpperCase(); av.style.background=currentUser.avatar_color||'#0059a9'; }
+function loadSess(){const t=localStorage.getItem('ft'),u=localStorage.getItem('fu');if(t&&u){try{CU=JSON.parse(u);updUI();}catch(_){}}}
+function saveSess(t,u){localStorage.setItem('ft',t);localStorage.setItem('fu',JSON.stringify(u));CU=u;updUI();}
+function logout(){localStorage.removeItem('ft');localStorage.removeItem('fu');CU=null;if(typeof google!=='undefined')google.accounts.id.disableAutoSelect();updUI();stopPoll();goHome();toast('התנתקת','i');}
+function getTok(){return localStorage.getItem('ft')||'';}
+function updUI(){
+  const li=!!CU;
+  document.getElementById('utop').style.display=li?'flex':'none';
+  document.getElementById('lbtn').style.display=li?'none':'';
+  document.getElementById('notif-btn').style.display=li?'flex':'none';
+  if(li){
+    const av=document.getElementById('utav');
+    if(CU.avatar_url)av.innerHTML=`<img src="${H(CU.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    else{av.textContent=(CU.username||'?')[0].toUpperCase();av.style.background=CU.avatar_color||'#0059a9';}
     av.onclick=()=>goMyProfile();
-    document.getElementById('user-topbar-name').textContent=currentUser.username;
-    document.getElementById('user-topbar-name').onclick=()=>goMyProfile();
-    if (isAdmin()) {
-      document.getElementById('admin-bar-home').style.display='flex';
-      document.getElementById('admin-users-btn').style.display='flex';
-    }
-  } else {
-    document.getElementById('admin-bar-home').style.display='none';
-    document.getElementById('admin-users-btn').style.display='none';
-  }
+    document.getElementById('utnm').textContent=CU.username;
+    document.getElementById('utnm').onclick=()=>goMyProfile();
+    if(isAdm()){document.getElementById('abar').style.display='flex';document.getElementById('adm-btn').style.display='flex';}
+  }else{document.getElementById('abar').style.display='none';document.getElementById('adm-btn').style.display='none';}
 }
-function isAdmin() { return currentUser&&(currentUser.is_admin===true||currentUser.is_admin==='TRUE'); }
-function showGoogleLogin() { openModal('login-modal'); setTimeout(renderGoogleButton,50); }
+function isAdm(){return CU&&(CU.is_admin===true||CU.is_admin==='TRUE');}
+function showLogin(){openModal('login-modal');setTimeout(renderGBtn,50);}
 
-// ══════════════════════════════════════
-//  API
-// ══════════════════════════════════════
-async function apiGet(path,params={}) {
-  const qs=new URLSearchParams(params).toString();
-  const url=API_BASE+path+(qs?'?'+qs:'');
-  const h={}; const tok=getToken(); if(tok) h['Authorization']='Bearer '+tok;
-  const r=await fetch(url,{headers:h}); return r.json();
+async function aGet(p,q={}){
+  const qs=new URLSearchParams(q).toString();
+  const h={};const t=getTok();if(t)h['Authorization']='Bearer '+t;
+  return(await fetch(API+p+(qs?'?'+qs:''),{headers:h})).json();
 }
-async function apiPost(path,body={}) {
-  const h={'Content-Type':'application/json'};
-  const tok=getToken(); if(tok) h['Authorization']='Bearer '+tok;
-  const r=await fetch(API_BASE+path,{method:'POST',headers:h,body:JSON.stringify(body)}); return r.json();
+async function aPost(p,b={}){
+  const h={'Content-Type':'application/json'};const t=getTok();if(t)h['Authorization']='Bearer '+t;
+  return(await fetch(API+p,{method:'POST',headers:h,body:JSON.stringify(b)})).json();
 }
-async function apiDelete(path) {
-  const h={}; const tok=getToken(); if(tok) h['Authorization']='Bearer '+tok;
-  const r=await fetch(API_BASE+path,{method:'DELETE',headers:h}); return r.json();
+async function aDel(p){
+  const h={};const t=getTok();if(t)h['Authorization']='Bearer '+t;
+  return(await fetch(API+p,{method:'DELETE',headers:h})).json();
 }
 
-// ══════════════════════════════════════
-//  PAGES
-// ══════════════════════════════════════
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const pg=document.getElementById(id); if(pg) pg.classList.add('active');
-  currentPage=id;
-  if (id!=='topic-page') stopPoll();
-  if (id==='search-page') document.getElementById('search-main-input').focus();
-  if (id==='latest-page') loadLatest();
-  if (id==='popular-page') loadPopular();
-  if (id==='notifications-page') showNotifications();
+function showPage(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  const pg=document.getElementById(id);if(pg)pg.classList.add('on');
+  CP=id;if(id!=='topic-page')stopPoll();
+  if(id==='search-page')document.getElementById('srch-inp').focus();
+  if(id==='latest-page')loadLatest();
+  if(id==='popular-page')loadPopular();
+  if(id==='notifications-page')showNotifs();
 }
-function goHome() { showPage('home-page'); loadHome(); }
-function goMyProfile() { if(!currentUser){showGoogleLogin();return;} showProfilePage(currentUser.id); }
+function goHome(){showPage('home-page');loadHome();}
+function goMyProfile(){if(!CU){showLogin();return;}showProfile(CU.id);}
 
-// ══════════════════════════════════════
-//  HOME
-// ══════════════════════════════════════
-async function loadHome() {
-  const c=document.getElementById('categories-container');
-  c.innerHTML='<div class="loading"><div class="spinner"></div> טוען...</div>';
-  try {
-    const [cR,fR]=await Promise.all([apiGet('/categories'),apiGet('/forums')]);
-    if(!cR.ok){c.innerHTML=emptyState('שגיאה בטעינה');return;}
-    allCategories=cR.data.categories||[];
-    allForums=fR.data.forums||[];
-    if(!allCategories.length){c.innerHTML=emptyState(isAdmin()?'לחץ "+ קטגוריה" להתחיל':'הפורום ריק');return;}
-    c.innerHTML=allCategories.map(cat=>buildCategoryBlock(cat)).join('');
-  } catch(e){c.innerHTML=emptyState('שגיאת רשת');}
+async function loadHome(){
+  const c=document.getElementById('cats-c');
+  c.innerHTML='<div class="ld"><div class="sp"></div> טוען...</div>';
+  try{
+    const [cr,fr]=await Promise.all([aGet('/categories'),aGet('/forums')]);
+    if(!cr.ok){c.innerHTML=ES('שגיאה');return;}
+    allCats=cr.data.categories||[];allForums=fr.data.forums||[];
+    if(!allCats.length){c.innerHTML=ES(isAdm()?'לחץ "+ קטגוריה" להתחיל':'הפורום ריק');return;}
+    c.innerHTML=allCats.map(cat=>buildCat(cat)).join('');
+  }catch(e){c.innerHTML=ES('שגיאת רשת');}
 }
-
-function buildCategoryBlock(cat) {
-  const forums=allForums.filter(f=>f.category_id===cat.id);
-  const totalT=forums.reduce((s,f)=>s+(parseInt(f.topic_count)||0),0);
-  const totalP=forums.reduce((s,f)=>s+(parseInt(f.post_count)||0),0);
-  const adminBtns=isAdmin()?`
-    <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation();openCreateForumModal('${cat.id}')">+ פורום</button>
-    <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();deleteCategory('${cat.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>`:'';
-  const links=forums.map(f=>`
-    <div class="forum-link" onclick="showForumPage('${f.id}','${cat.id}')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      <span>${escH(f.name)}</span>
-      <span class="forum-link-stats">${fmtN(f.topic_count||0)} נושאים · ${fmtN(f.post_count||0)} הודעות</span>
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-      ${isAdmin()?`<button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openEditForumModal('${f.id}','${escA(f.name)}','${escA(f.description||'')}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-      <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();deleteForum('${f.id}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>`:''}
-    </div>`).join('');
-  return `<div class="cat-block">
-    <div class="cat-header">
-      <div class="cat-title" style="color:${cat.color||'var(--blue)'}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>${escH(cat.name)}</div>
-      <div class="cat-meta">
-        <div class="stat-box"><div class="stat-num">${fmtN(totalT)}</div><div class="stat-lbl">נושאים</div></div>
-        <div class="stat-box"><div class="stat-num">${fmtN(totalP)}</div><div class="stat-lbl">הודעות</div></div>
-        ${adminBtns}
-      </div>
-    </div>
-    <div class="cat-body"><div class="forum-grid">${links||'<div style="color:var(--gray-400);font-size:14px;padding:8px 0">אין פורומים עדיין</div>'}</div></div>
-  </div>`;
+function buildCat(cat){
+  const fs=allForums.filter(f=>f.category_id===cat.id);
+  const tt=fs.reduce((s,f)=>s+(parseInt(f.topic_count)||0),0);
+  const tp=fs.reduce((s,f)=>s+(parseInt(f.post_count)||0),0);
+  const ab=isAdm()?`<button class="btn bs bsm" onclick="event.stopPropagation();openCForum('${cat.id}')">+ פורום</button>
+    <button class="btn bg bsm" onclick="event.stopPropagation();delCat('${cat.id}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>`:'';
+  const ls=fs.map(f=>`<div class="fl" onclick="showForum('${f.id}','${cat.id}')">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    <span>${H(f.name)}</span><span class="fls">${N(f.topic_count||0)} נושאים · ${N(f.post_count||0)} הודעות</span>
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    ${isAdm()?`<button class="btn bg bsm" onclick="event.stopPropagation();openEForum('${f.id}','${A(f.name)}','${A(f.description||'')}')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+    <button class="btn bg bsm" onclick="event.stopPropagation();delForum('${f.id}')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg></button>`:''}
+  </div>`).join('');
+  return `<div class="catb"><div class="cath">
+    <div class="cattt" style="color:${cat.color||'var(--blue)'}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>${H(cat.name)}</div>
+    <div class="catm"><div class="stb"><div class="stn">${N(tt)}</div><div class="stl">נושאים</div></div><div class="stb"><div class="stn">${N(tp)}</div><div class="stl">הודעות</div></div>${ab}</div>
+  </div><div class="catbody"><div class="fgrid">${ls||'<div style="color:var(--g400);font-size:14px;padding:7px 0">אין פורומים</div>'}</div></div></div>`;
 }
 
-// ══════════════════════════════════════
-//  FORUM PAGE
-// ══════════════════════════════════════
-async function showForumPage(forumId,catId,page) {
-  currentForumId=forumId; currentCategoryId=catId; currentForumPage=page||1;
-  showPage('forum-page');
-  const forum=allForums.find(f=>f.id===forumId)||{};
-  const cat=allCategories.find(c=>c.id===catId)||{};
-  document.getElementById('forum-breadcrumb').innerHTML=`<span class="bc-link" onclick="goHome()">בית</span><span class="sep">›</span><span>${escH(cat.name||'')}</span><span class="sep">›</span><span style="color:var(--gray-700)">${escH(forum.name||'')}</span>`;
-  const hb=document.getElementById('forum-header-bar'); hb.style.display='flex';
-  document.getElementById('forum-banner-title').textContent=forum.name||'';
-  document.getElementById('forum-banner-sub').textContent=forum.description||'';
-  document.getElementById('forum-stats-box').innerHTML=`<div class="stat-box"><div class="stat-num">${fmtN(forum.topic_count||0)}</div><div class="stat-lbl">נושאים</div></div>`;
-  document.getElementById('new-topic-btn').style.display=currentUser?'flex':'none';
-  const ab=document.getElementById('forum-admin-bar');
-  ab.style.display=isAdmin()?'flex':'none';
-  if(isAdmin()) ab.innerHTML=`<span class="admin-badge">ניהול</span>
-    <button class="btn btn-sm btn-secondary" onclick="openEditForumModal('${forumId}','${escA(forum.name||'')}','${escA(forum.description||'')}')">ערוך</button>
-    <button class="btn btn-sm btn-danger" onclick="deleteForum('${forumId}')">מחק פורום</button>`;
-  const c=document.getElementById('topics-container');
-  c.innerHTML='<div class="loading"><div class="spinner"></div> טוען...</div>';
-  try {
-    const res=await apiGet('/topics',{forum_id:forumId,page:currentForumPage});
-    if(!res.ok){c.innerHTML=emptyState('שגיאה');return;}
-    const {topics,pages}=res.data;
-    if(!topics.length){c.innerHTML=emptyState('אין נושאים עדיין. היה הראשון!');return;}
-    c.innerHTML=`<table class="topics-table"><thead><tr><th>נושא</th><th style="text-align:center">תגובות</th><th style="text-align:center">צפיות</th><th>פוסט אחרון</th></tr></thead><tbody>${topics.map((t,i)=>buildTopicRow(t,i)).join('')}</tbody></table>`;
-    buildPagination('topics-pagination',currentForumPage,pages,p=>showForumPage(forumId,catId,p));
-  } catch(e){c.innerHTML=emptyState('שגיאת רשת');}
+async function showForum(fid,cid,page){
+  CFI=fid;CCI=cid;CFP=page||1;showPage('forum-page');
+  const f=allForums.find(x=>x.id===fid)||{};const cat=allCats.find(x=>x.id===cid)||{};
+  document.getElementById('fbread').innerHTML=`<span class="bcl" onclick="goHome()">בית</span><span class="sep">›</span><span>${H(cat.name||'')}</span><span class="sep">›</span><span style="color:var(--g700)">${H(f.name||'')}</span>`;
+  document.getElementById('fhb').style.display='flex';
+  document.getElementById('fbt').textContent=f.name||'';document.getElementById('fbs').textContent=f.description||'';
+  document.getElementById('fstat').innerHTML=`<div class="stb"><div class="stn">${N(f.topic_count||0)}</div><div class="stl">נושאים</div></div>`;
+  document.getElementById('ntbtn').style.display=CU?'flex':'none';
+  const ab=document.getElementById('fabar');ab.style.display=isAdm()?'flex':'none';
+  if(isAdm())ab.innerHTML=`<span class="abadge">ניהול</span><button class="btn bs bsm" onclick="openEForum('${fid}','${A(f.name||'')}','${A(f.description||'')}')">ערוך</button><button class="btn bd bsm" onclick="delForum('${fid}')">מחק פורום</button>`;
+  const c=document.getElementById('topics-c');c.innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{
+    const r=await aGet('/topics',{forum_id:fid,page:CFP});
+    if(!r.ok){c.innerHTML=ES('שגיאה');return;}
+    const {topics,pages}=r.data;
+    if(!topics.length){c.innerHTML=ES('אין נושאים עדיין. היה הראשון!');return;}
+    c.innerHTML=`<table class="tt"><thead><tr><th>נושא</th><th style="text-align:center">תגובות</th><th style="text-align:center">צפיות</th><th>פוסט אחרון</th></tr></thead><tbody>${topics.map((t,i)=>buildTRow(t,i)).join('')}</tbody></table>`;
+    buildPag('topics-pag',CFP,pages,p=>showForum(fid,cid,p));
+  }catch(e){c.innerHTML=ES('שגיאת רשת');}
+}
+function buildTRow(t,i){
+  const pin=t.is_pinned===true||t.is_pinned==='TRUE';
+  const lck=t.is_locked===true||t.is_locked==='TRUE';
+  return `<tr><td><div class="ttl" onclick="showTopic('${t.id}')">${H(t.title)}</div>
+    <div class="tbdg">${pin?'<span class="tb tp">מוצמד</span>':''}${lck?'<span class="tb tl">נעול</span>':''}${i<3?'<span class="tb tn">חדש</span>':''}</div>
+    <div class="tmet">פתח: ${H(t.author_name||'')} · ${D(t.created)}</div>
+  </td><td class="tst">${N(t.reply_count||0)}</td><td class="tst">${N(t.view_count||0)}</td>
+  <td style="font-size:12px;color:var(--g500)">${D(t.last_post)}</td></tr>`;
 }
 
-function buildTopicRow(t,i) {
-  const pinned=t.is_pinned===true||t.is_pinned==='TRUE';
-  const locked=t.is_locked===true||t.is_locked==='TRUE';
-  const badges=[
-    pinned?`<span class="tbadge tb-pinned">מוצמד</span>`:'',
-    locked?`<span class="tbadge tb-locked">נעול</span>`:'',
-    i<3?`<span class="tbadge tb-new">חדש</span>`:''
-  ].join('');
-  return `<tr><td>
-    <div class="topic-title-link" onclick="showTopicPage('${t.id}')">${escH(t.title)}</div>
-    <div class="topic-badges">${badges}</div>
-    <div class="topic-meta">פתח: ${escH(t.author_name||'')} · ${fmtDate(t.created)}</div>
-  </td><td class="topic-stat">${fmtN(t.reply_count||0)}</td>
-  <td class="topic-stat">${fmtN(t.view_count||0)}</td>
-  <td style="font-size:12px;color:var(--gray-500)">${fmtDate(t.last_post)}</td></tr>`;
-}
-
-// ══════════════════════════════════════
-//  TOPIC PAGE + POLLING
-// ══════════════════════════════════════
-async function showTopicPage(topicId,page) {
-  currentTopicId=topicId; currentTopicPage=page||1;
-  showPage('topic-page');
-  document.getElementById('topic-header').innerHTML='<div class="loading"><div class="spinner"></div> טוען...</div>';
-  document.getElementById('posts-container').innerHTML='';
+async function showTopic(tid,page){
+  CTI=tid;CTP=page||1;showPage('topic-page');
+  document.getElementById('topic-h').innerHTML='<div class="ld"><div class="sp"></div></div>';
+  document.getElementById('posts-c').innerHTML='';
   document.getElementById('new-posts-bar').style.display='none';
-  try {
-    const res=await apiGet(`/topics/${topicId}`,{page:currentTopicPage});
-    if(!res.ok){document.getElementById('topic-header').innerHTML=emptyState('שגיאה');return;}
-    const {topic,posts,pages}=res.data;
-    const forum=allForums.find(f=>f.id===topic.forum_id)||{};
-    const cat=allCategories.find(c=>c.id===forum.category_id)||{};
-    document.getElementById('topic-breadcrumb').innerHTML=`<span class="bc-link" onclick="goHome()">בית</span><span class="sep">›</span><span class="bc-link" onclick="showForumPage('${forum.id}','${cat.id}')">${escH(cat.name||'')}</span><span class="sep">›</span><span class="bc-link" onclick="showForumPage('${forum.id}','${cat.id}')">${escH(forum.name||'')}</span><span class="sep">›</span><span style="color:var(--gray-700)">${escH(topic.title)}</span>`;
-    const adminBtns=isAdmin()?`<div class="topic-admin-bar">
-      <button class="btn btn-sm btn-secondary" onclick="adminPinTopic('${topicId}')">${topic.is_pinned?'בטל הצמדה':'הצמד'}</button>
-      <button class="btn btn-sm btn-secondary" onclick="adminLockTopic('${topicId}')">${topic.is_locked?'בטל נעילה':'נעל'}</button>
-      <button class="btn btn-sm btn-danger" onclick="adminDeleteTopic('${topicId}')">מחק נושא</button>
-    </div>`:'';
-    document.getElementById('topic-header').innerHTML=`<div class="topic-header-box">
-      <div class="topic-header-title">${escH(topic.title)}</div>
-      <div class="topic-header-meta">
-        <span>${fmtN(topic.reply_count||0)} תגובות</span>
-        <span>${fmtN(topic.view_count||0)} צפיות</span>
-      </div>${adminBtns}</div>`;
-    document.getElementById('posts-container').innerHTML=posts.map((p,i)=>buildPost(p,i,topic)).join('');
-    buildPagination('posts-pagination',currentTopicPage,pages,pg=>showTopicPage(topicId,pg));
+  try{
+    const r=await aGet(`/topics/${tid}`,{page:CTP});
+    if(!r.ok){document.getElementById('topic-h').innerHTML=ES('שגיאה');return;}
+    const {topic,posts,pages}=r.data;
+    const f=allForums.find(x=>x.id===topic.forum_id)||{};const cat=allCats.find(x=>x.id===f.category_id)||{};
+    document.getElementById('tbread').innerHTML=`<span class="bcl" onclick="goHome()">בית</span><span class="sep">›</span><span class="bcl" onclick="showForum('${f.id}','${cat.id}')">${H(cat.name||'')}</span><span class="sep">›</span><span class="bcl" onclick="showForum('${f.id}','${cat.id}')">${H(f.name||'')}</span><span class="sep">›</span><span style="color:var(--g700)">${H(topic.title)}</span>`;
+    const ab=isAdm()?`<div class="tab2"><button class="btn bs bsm" onclick="pinT('${tid}')">${topic.is_pinned?'בטל הצמדה':'הצמד'}</button><button class="btn bs bsm" onclick="lockT('${tid}')">${topic.is_locked?'בטל נעילה':'נעל'}</button><button class="btn bd bsm" onclick="delT('${tid}')">מחק נושא</button></div>`:'';
+    document.getElementById('topic-h').innerHTML=`<div class="thb"><div class="tht">${H(topic.title)}</div><div class="thm"><span>${N(topic.reply_count||0)} תגובות</span><span>${N(topic.view_count||0)} צפיות</span></div>${ab}</div>`;
+    document.getElementById('posts-c').innerHTML=posts.map((p,i)=>buildPost(p,i,topic)).join('');
+    buildPag('posts-pag',CTP,pages,pg=>showTopic(tid,pg));
     buildReplyBox(topic);
-    // Store last post time for polling
-    if(posts.length) lastPostTime=posts[posts.length-1].created;
-    else lastPostTime=topic.created;
-    startPoll(topicId);
-    // Bind interactions
-    document.querySelectorAll('.post-content img').forEach(img=>img.onclick=()=>openLightbox(img.src));
-    document.querySelectorAll('.spoiler-toggle').forEach(btn=>{
-      btn.onclick=()=>{
-        btn.classList.toggle('open');
-        const body=btn.nextElementSibling;
-        body.classList.toggle('open');
-      };
-    });
-  } catch(e){document.getElementById('topic-header').innerHTML=emptyState('שגיאת רשת');}
+    if(posts.length)lastPT=posts[posts.length-1].created;else lastPT=topic.created;
+    startPoll(tid);
+    document.querySelectorAll('.pc img').forEach(img=>img.onclick=()=>openLB(img.src));
+    document.querySelectorAll('.sptg').forEach(btn=>{btn.onclick=()=>{btn.classList.toggle('on');btn.nextElementSibling.classList.toggle('on');};});
+  }catch(e){document.getElementById('topic-h').innerHTML=ES('שגיאת רשת');}
 }
 
-function startPoll(topicId) {
+function startPoll(tid){
   stopPoll();
-  pollTimer=setInterval(async()=>{
-    if(currentPage!=='topic-page'||currentTopicId!==topicId){stopPoll();return;}
-    try {
-      const res=await apiGet('/topics/poll',{topic_id:topicId,since:lastPostTime||''});
-      if(res.ok&&res.data.new_count>0) {
-        const bar=document.getElementById('new-posts-bar');
-        document.getElementById('new-posts-text').textContent=`יש ${res.data.new_count} הודעות חדשות — לחץ לרענון`;
-        bar.style.display='flex';
-      }
-    } catch(_){}
+  pollT=setInterval(async()=>{
+    if(CP!=='topic-page'||CTI!==tid){stopPoll();return;}
+    try{const r=await aGet('/topics/poll',{topic_id:tid,since:lastPT||''});
+      if(r.ok&&r.data.new_count>0){document.getElementById('npbt').textContent=`יש ${r.data.new_count} הודעות חדשות — לחץ לרענון`;document.getElementById('new-posts-bar').style.display='flex';}
+    }catch(_){}
   },10000);
 }
-function stopPoll() { if(pollTimer){clearInterval(pollTimer);pollTimer=null;} }
-function refreshTopic() {
-  document.getElementById('new-posts-bar').style.display='none';
-  showTopicPage(currentTopicId,currentTopicPage);
-}
+function stopPoll(){if(pollT){clearInterval(pollT);pollT=null;}}
+function refreshTopic(){document.getElementById('new-posts-bar').style.display='none';showTopic(CTI,CTP);}
 
-// ══════════════════════════════════════
-//  RICH CONTENT RENDERER (client-side)
-// ══════════════════════════════════════
-function renderContent(raw) {
-  // Escape first, then apply markup
-  let h=escH(raw);
-  // Bold, italic, underline, strikethrough
+function renderC(raw){
+  let h=H(raw);
   h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   h=h.replace(/\*([^*\n]+?)\*/g,'<em>$1</em>');
   h=h.replace(/__(.+?)__/g,'<u>$1</u>');
   h=h.replace(/~~(.+?)~~/g,'<s>$1</s>');
-  // Horizontal rule
   h=h.replace(/^---$/gm,'<hr>');
-  // Spoiler: [spoiler]text[/spoiler] — accordion
-  h=h.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi,(_,content)=>`
-    <div class="spoiler-block">
-      <button class="spoiler-toggle" type="button">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-        ספוילר
-      </button>
-      <div class="spoiler-body">${content.trim()}</div>
-    </div>`);
-  // Hidden text: [hide]text[/hide] — blur
-  h=h.replace(/\[hide\]([\s\S]*?)\[\/hide\]/gi,(_,content)=>`<span class="hidden-text" title="לחץ לגילוי">${content}</span>`);
-  // Images: ![alt](url)
-  h=h.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g,'<img src="$2" alt="$1" loading="lazy">');
-  // Mentions: @username
+  h=h.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi,(_,c)=>`<div class="spl"><button class="sptg" type="button"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>ספוילר</button><div class="spb">${c.trim()}</div></div>`);
+  h=h.replace(/\[hide\]([\s\S]*?)\[\/hide\]/gi,(_,c)=>`<span class="ht" title="לחץ לגילוי">${c}</span>`);
+  h=h.replace(/!\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g,'<img src="$2" alt="$1" loading="lazy">');
   h=h.replace(/@(\w+)/g,'<strong style="color:var(--blue)">@$1</strong>');
-  // Newlines
   h=h.replace(/\n/g,'<br>');
   return h;
 }
 
-// ══════════════════════════════════════
-//  BUILD POST
-// ══════════════════════════════════════
-function buildPost(p,index,topic) {
-  const isLocked=topic.is_locked===true||topic.is_locked==='TRUE';
-  const avatarHtml=p.author_avatar_url
-    ?`<img src="${escH(p.author_avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-    :`<span>${(p.author_name||'?')[0].toUpperCase()}</span>`;
-
-  const roleHtml=p.author_is_admin
-    ?`<span class="post-role role-admin">מנהל</span>`
-    :p.author_is_banned
-      ?`<span class="post-role role-banned">חסום</span>`
-      :`<span class="post-role role-member">חבר</span>`;
-
-  const quoteHtml=p.quoted_post?`<div class="post-quote">
-    <div class="post-quote-author">${escH(p.quoted_post.author)}</div>
-    <div class="post-quote-text">${p.quoted_post.is_deleted?'[נמחק]':escH(p.quoted_post.content)}</div>
+function buildPost(p,idx,topic){
+  const locked=topic.is_locked===true||topic.is_locked==='TRUE';
+  const av=p.author_avatar_url?`<img src="${H(p.author_avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span>${(p.author_name||'?')[0].toUpperCase()}</span>`;
+  const role=p.author_is_admin?'<span class="pr ra">מנהל</span>':p.author_is_banned?'<span class="pr rb">חסום</span>':'<span class="pr rm">חבר</span>';
+  const qh=p.quoted_post?`<div class="pq"><div class="pqa">${H(p.quoted_post.author)}</div><div class="pqt">${p.quoted_post.is_deleted?'[נמחק]':H(p.quoted_post.content)}</div></div>`:'';
+  const ch=p.is_deleted?`<div class="pdel">${H(p.content)}</div>`:`${qh}<div class="pc">${renderC(p.content)}</div>`;
+  const mr=p.my_reaction,cr=CU&&CU.id!==p.author_id,ce=CU&&(CU.id===p.author_id||isAdm())&&!p.is_deleted,cd=ce;
+  const ln=p.like_names&&p.like_names.length?p.like_names.join(', '):'';
+  const dn=p.dislike_names&&p.dislike_names.length?p.dislike_names.join(', '):'';
+  const footer=!p.is_deleted?`<div class="pf">
+    ${p.edited?`<span class="ped">נערך ${D(p.edited)}</span>`:''}
+    ${cr?`<div class="rw"><button class="rb2 ${mr==='like'?'lk':''}" onclick="doReact('${p.id}','like')"><svg width="12" height="12" viewBox="0 0 24 24" fill="${mr==='like'?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/></svg>${N(p.likes||0)}</button>${ln?`<div class="rtt">${H(ln)}</div>`:''}</div>
+    <div class="rw"><button class="rb2 ${mr==='dislike'?'dl':''}" onclick="doReact('${p.id}','dislike')"><svg width="12" height="12" viewBox="0 0 24 24" fill="${mr==='dislike'?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/></svg>${N(p.dislikes||0)}</button>${dn?`<div class="rtt">${H(dn)}</div>`:''}</div>`
+    :`<span style="font-size:12px;color:var(--g400)">${N(p.likes||0)} לייקים · ${N(p.dislikes||0)} דיסלייקים</span>`}
+    ${!locked&&CU?`<button class="ab2" onclick="setQ('${p.id}','${A(p.author_name)}','${A(p.content)}')">ציטוט</button>`:''}
+    ${ce?`<button class="ab2" onclick="openEPost('${p.id}','${A(p.content)}')">ערוך</button>`:''}
+    ${cd?`<button class="ab2" style="color:var(--red)" onclick="delPost('${p.id}')">מחק</button>`:''}
+    ${isAdm()&&!p.is_deleted&&CU.id!==p.author_id?`<button class="ab2" style="color:var(--red)" onclick="banU('${p.author_id}')">חסום</button><button class="ab2" onclick="openRestr('${p.author_id}')">הגבל</button>`:''}
   </div>`:'';
-
-  const contentHtml=p.is_deleted
-    ?`<div class="post-deleted">${escH(p.content)}</div>`
-    :`${quoteHtml}<div class="post-content">${renderContent(p.content)}</div>`;
-
-  const myReact=p.my_reaction;
-  const canReact=currentUser&&currentUser.id!==p.author_id;
-  const canEdit=currentUser&&(currentUser.id===p.author_id||isAdmin())&&!p.is_deleted;
-  const canDel=currentUser&&(currentUser.id===p.author_id||isAdmin())&&!p.is_deleted;
-
-  const likeTooltip=p.like_names&&p.like_names.length?p.like_names.join(', '):'';
-  const dislikeTooltip=p.dislike_names&&p.dislike_names.length?p.dislike_names.join(', '):'';
-
-  const footer=!p.is_deleted?`<div class="post-footer">
-    ${p.edited?`<span class="post-edited">נערך ${fmtDate(p.edited)}</span>`:''}
-    ${canReact?`
-      <div class="react-wrap">
-        <button class="react-btn ${myReact==='like'?'liked':''}" onclick="doReact('${p.id}','like')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="${myReact==='like'?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/></svg>
-          ${fmtN(p.likes||0)}
-        </button>
-        ${likeTooltip?`<div class="react-tooltip">${escH(likeTooltip)}</div>`:''}
-      </div>
-      <div class="react-wrap">
-        <button class="react-btn ${myReact==='dislike'?'disliked':''}" onclick="doReact('${p.id}','dislike')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="${myReact==='dislike'?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/></svg>
-          ${fmtN(p.dislikes||0)}
-        </button>
-        ${dislikeTooltip?`<div class="react-tooltip">${escH(dislikeTooltip)}</div>`:''}
-      </div>`
-    :`<span style="font-size:12px;color:var(--gray-400)">${fmtN(p.likes||0)} לייקים · ${fmtN(p.dislikes||0)} דיסלייקים</span>`}
-    ${!isLocked&&currentUser?`<button class="action-btn" onclick="setQuote('${p.id}','${escA(p.author_name)}','${escA(p.content)}')">ציטוט</button>`:''}
-    ${canEdit?`<button class="action-btn" onclick="openEditPost('${p.id}','${escA(p.content)}')">ערוך</button>`:''}
-    ${canDel?`<button class="action-btn" style="color:var(--red)" onclick="doDeletePost('${p.id}')">מחק</button>`:''}
-    ${isAdmin()&&!p.is_deleted&&currentUser.id!==p.author_id?`
-      <button class="action-btn" style="color:var(--red)" onclick="doBanUser('${p.author_id}')">חסום</button>
-      <button class="action-btn" onclick="openRestrictModal('${p.author_id}')">הגבל</button>`:''}
-  </div>`:'';
-
   return `<div class="post" id="post-${p.id}">
-    <div class="post-sidebar">
-      <div class="post-avatar" style="background:${p.author_color||'#666'}">${avatarHtml}</div>
-      <div class="post-username" onclick="showProfilePage('${p.author_id}')">${escH(p.author_name||'')}</div>
-      ${roleHtml}
-      <div class="post-rep"><strong>${fmtN(p.author_reputation||0)}</strong> מוניטין</div>
-      <div class="post-count">${fmtN(p.author_post_count||0)} הודעות</div>
-    </div>
-    <div class="post-body">
-      <div class="post-header"><span class="post-time">${fmtDate(p.created)}</span><span class="post-num">#${(currentTopicPage-1)*15+index+1}</span></div>
-      ${contentHtml}${footer}
-    </div>
-  </div>`;
+    <div class="psb"><div class="pav" style="background:${p.author_color||'#666'}">${av}</div>
+      <div class="pun" onclick="showProfile('${p.author_id}')">${H(p.author_name||'')}</div>${role}
+      <div class="prep"><strong>${N(p.author_reputation||0)}</strong> מוניטין</div>
+      <div class="pcnt">${N(p.author_post_count||0)} הודעות</div></div>
+    <div class="pb"><div class="ph"><span class="pt">${D(p.created)}</span><span class="pn">#${(CTP-1)*15+idx+1}</span></div>
+      ${ch}${footer}</div></div>`;
 }
 
-// ══════════════════════════════════════
-//  EDITOR
-// ══════════════════════════════════════
-function buildEditor(id,initVal='',minH='120px') {
-  return `<div class="editor-wrap">
-    <div class="editor-toolbar">
-      <button type="button" class="tb" title="הדגשה" onclick="fmt('${id}','bold')"><strong>B</strong></button>
-      <button type="button" class="tb" title="נטוי" onclick="fmt('${id}','italic')"><em style="font-style:italic">I</em></button>
-      <button type="button" class="tb" title="קו תחתון" onclick="fmt('${id}','under')"><u>U</u></button>
-      <button type="button" class="tb" title="קו חוצה" onclick="fmt('${id}','strike')"><s>S</s></button>
-      <span class="tb-sep"></span>
-      <button type="button" class="tb" title="קו מפריד" onclick="fmt('${id}','hr')" style="font-size:15px">—</button>
-      <button type="button" class="tb tb-wide" title="ספוילר" onclick="fmt('${id}','spoiler')">ספוילר</button>
-      <button type="button" class="tb tb-wide" title="טקסט מוסתר" onclick="fmt('${id}','hide')">מוסתר</button>
-      <button type="button" class="tb tb-wide" title="תייג משתמש" onclick="fmt('${id}','mention')">@תיוג</button>
+function buildEditor(id,val,minh){
+  val=val||'';minh=minh||'120px';
+  return `<div class="ew">
+    <div class="etb">
+      <button type="button" class="etbb" onclick="fmt('${id}','bold')"><strong>B</strong></button>
+      <button type="button" class="etbb" onclick="fmt('${id}','italic')"><em>I</em></button>
+      <button type="button" class="etbb" onclick="fmt('${id}','under')"><u>U</u></button>
+      <button type="button" class="etbb" onclick="fmt('${id}','strike')"><s>S</s></button>
+      <span class="ets"></span>
+      <button type="button" class="etbb" onclick="fmt('${id}','hr')" style="font-size:14px">—</button>
+      <button type="button" class="etbb" onclick="fmt('${id}','spoiler')">ספוילר</button>
+      <button type="button" class="etbb" onclick="fmt('${id}','hide')">מוסתר</button>
+      <button type="button" class="etbb" onclick="fmt('${id}','mention')">@תיוג</button>
     </div>
     <div style="position:relative">
-      <textarea id="${id}" class="editor-textarea" style="min-height:${minH}"
-        placeholder="כתוב כאן...&#10;עיצוב: **מודגש** *נטוי* __קו תחתון__ ~~קו חוצה~~&#10;ספוילר: [spoiler]...[/spoiler]  מוסתר: [hide]...[/hide]&#10;תמונה: ![](URL)  תיוג: @שם"
-        oninput="onEditorInput('${id}',this)"
-        onkeydown="onEditorKey('${id}',this,event)">${escH(initVal)}</textarea>
-      <div id="mention-dd-${id}" class="mention-dropdown" style="display:none;position:absolute;top:0;right:0"></div>
+      <textarea id="${id}" class="eta" style="min-height:${minh}"
+        placeholder="כתוב כאן...&#10;**מודגש** *נטוי* __קו__ ~~קו חוצה~~&#10;[spoiler]...[/spoiler]  [hide]...[/hide]  ![](URL)  @תיוג"
+        oninput="edInp('${id}',this)" onkeydown="edKey('${id}',event)">${H(val)}</textarea>
+      <div id="mdd-${id}" class="mdd"></div>
     </div>
-    <div class="editor-footer">
-      <label class="img-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> העלה תמונה<input type="file" accept="image/*" onchange="uploadImg(this,'${id}')"></label>
-      <div class="img-url-wrap">
-        <input type="text" class="img-url-input" id="img-url-${id}" placeholder="או הדבק URL תמונה...">
-        <button type="button" class="btn btn-sm btn-secondary" onclick="insertImgUrl('${id}')">הכנס</button>
-      </div>
-      <span id="up-prog-${id}" class="up-prog"></span>
+    <div class="eft">
+      <label class="iml"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>העלה תמונה<input type="file" accept="image/*" onchange="upImg(this,'${id}')"></label>
+      <div class="iuw"><input type="text" class="iui" id="iu-${id}" placeholder="או הדבק URL תמונה..."><button type="button" class="btn bs bsm" onclick="insUrl('${id}')">הכנס</button></div>
+      <span id="up-${id}" class="upg"></span>
     </div>
   </div>`;
 }
 
-function fmt(id,type) {
-  const ta=document.getElementById(id); if(!ta) return;
-  const s=ta.selectionStart, e=ta.selectionEnd, sel=ta.value.substring(s,e);
-  const before=ta.value.substring(0,s), after=ta.value.substring(e);
+function fmt(id,t){
+  const ta=document.getElementById(id);if(!ta)return;
+  const s=ta.selectionStart,e=ta.selectionEnd,sel=ta.value.substring(s,e);
+  const b=ta.value.substring(0,s),a=ta.value.substring(e);
   let ins='';
-  if(type==='bold')    ins=`**${sel||'טקסט מודגש'}**`;
-  else if(type==='italic')  ins=`*${sel||'טקסט נטוי'}*`;
-  else if(type==='under')   ins=`__${sel||'טקסט'}__`;
-  else if(type==='strike')  ins=`~~${sel||'טקסט'}~~`;
-  else if(type==='hr')      ins=`\n---\n`;
-  else if(type==='spoiler') ins=`[spoiler]\n${sel||'תוכן הספוילר'}\n[/spoiler]`;
-  else if(type==='hide')    ins=`[hide]${sel||'טקסט מוסתר'}[/hide]`;
-  else if(type==='mention') ins=`@`;
-  ta.value=before+ins+after;
-  ta.focus();
-  const np=s+ins.length; ta.setSelectionRange(np,np);
+  if(t==='bold')ins=`**${sel||'טקסט'}**`;
+  else if(t==='italic')ins=`*${sel||'טקסט'}*`;
+  else if(t==='under')ins=`__${sel||'טקסט'}__`;
+  else if(t==='strike')ins=`~~${sel||'טקסט'}~~`;
+  else if(t==='hr')ins=`\n---\n`;
+  else if(t==='spoiler')ins=`[spoiler]\n${sel||'תוכן'}\n[/spoiler]`;
+  else if(t==='hide')ins=`[hide]${sel||'טקסט'}[/hide]`;
+  else if(t==='mention')ins=`@`;
+  ta.value=b+ins+a;ta.focus();const np=s+ins.length;ta.setSelectionRange(np,np);
 }
-
-function insertImgUrl(editorId) {
-  const inp=document.getElementById('img-url-'+editorId);
-  const url=inp.value.trim();
-  if(!url.startsWith('http')){toast('URL לא תקין','error');return;}
-  const ta=document.getElementById(editorId);
-  const pos=ta.selectionStart;
+function insUrl(id){
+  const inp=document.getElementById('iu-'+id);const url=inp.value.trim();
+  if(!url.startsWith('http')){toast('URL לא תקין','e');return;}
+  const ta=document.getElementById(id);const pos=ta.selectionStart;
   ta.value=ta.value.substring(0,pos)+`![](${url})`+ta.value.substring(pos);
-  inp.value=''; ta.focus();
+  inp.value='';ta.focus();
 }
-
-async function uploadImg(input,editorId) {
-  const file=input.files[0]; if(!file) return;
-  const prog=document.getElementById('up-prog-'+editorId);
-  prog.textContent='מעלה...';
-  try {
-    const fd=new FormData(); fd.append('image',file);
-    const r=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{Authorization:'Client-ID '+IMGUR_CLIENT_ID},body:fd});
+async function upImg(input,id){
+  const file=input.files[0];if(!file)return;
+  const pr=document.getElementById('up-'+id);pr.textContent='מעלה...';
+  try{
+    const fd=new FormData();fd.append('image',file);
+    const r=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{Authorization:'Client-ID '+IMGUR},body:fd});
     const d=await r.json();
-    if(d.success) {
-      const ta=document.getElementById(editorId);
-      const pos=ta.selectionStart;
-      ta.value=ta.value.substring(0,pos)+`![](${d.data.link})`+ta.value.substring(pos);
-      prog.textContent='הועלה!'; setTimeout(()=>prog.textContent='',2000);
-    } else { prog.textContent='שגיאת העלאה'; setTimeout(()=>prog.textContent='',3000); }
-  } catch(e){ prog.textContent='שגיאת רשת'; setTimeout(()=>prog.textContent='',3000); }
+    if(d.success){const ta=document.getElementById(id);const pos=ta.selectionStart;ta.value=ta.value.substring(0,pos)+`![](${d.data.link})`+ta.value.substring(pos);pr.textContent='הועלה!';setTimeout(()=>pr.textContent='',2000);}
+    else{pr.textContent='שגיאה';setTimeout(()=>pr.textContent='',3000);}
+  }catch(e){pr.textContent='שגיאת רשת';setTimeout(()=>pr.textContent='',3000);}
   input.value='';
 }
+function edInp(id,ta){
+  const pos=ta.selectionStart,val=ta.value;const bef=val.substring(0,pos);
+  const m=bef.match(/@(\w*)$/);const dd=document.getElementById('mdd-'+id);
+  if(m){
+    const f=allUsers.filter(u=>u.username.toLowerCase().startsWith(m[1].toLowerCase())&&(!CU||u.id!==CU.id)).slice(0,6);
+    if(f.length){dd.style.display='block';dd.innerHTML=f.map(u=>`<div class="mdi" onclick="insMention('${id}','${A(u.username)}')"><div style="width:21px;height:21px;border-radius:50%;background:${u.avatar_color||'#0059a9'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${u.username[0].toUpperCase()}</div><span>${H(u.username)}</span></div>`).join('');}
+    else dd.style.display='none';
+  }else dd.style.display='none';
+}
+function edKey(id,e){const dd=document.getElementById('mdd-'+id);if(dd&&dd.style.display==='block'&&e.key==='Escape'){dd.style.display='none';e.preventDefault();}}
+function insMention(id,un){const ta=document.getElementById(id);if(!ta)return;const pos=ta.selectionStart,val=ta.value;ta.value=val.substring(0,pos).replace(/@\w*$/,'')+`@${un} `+val.substring(pos);document.getElementById('mdd-'+id).style.display='none';ta.focus();}
+async function preloadUsers(){if(allUsers.length)return;try{const r=await aGet('/users');if(r.ok)allUsers=r.data.users||[];}catch(_){}}
+function openLB(src){const lb=document.createElement('div');lb.className='lb';lb.innerHTML=`<img src="${H(src)}">`;lb.onclick=()=>lb.remove();document.body.appendChild(lb);}
 
-// Mention autocomplete
-let mentionState={active:false,editorId:null,query:''};
-function onEditorInput(id,ta) {
-  const pos=ta.selectionStart, val=ta.value;
-  const before=val.substring(0,pos);
-  const match=before.match(/@(\w*)$/);
-  const dd=document.getElementById('mention-dd-'+id);
-  if(match) {
-    mentionState={active:true,editorId:id,query:match[1]};
-    const users=allUsersCache||[];
-    const filtered=users.filter(u=>u.username.toLowerCase().startsWith(match[1].toLowerCase())&&(!currentUser||u.id!==currentUser.id)).slice(0,6);
-    if(filtered.length) {
-      dd.style.display='block';
-      dd.innerHTML=filtered.map(u=>`<div class="mention-item" onclick="insertMention('${id}','${escA(u.username)}')">
-        <div style="width:22px;height:22px;border-radius:50%;background:${u.avatar_color||'#0059a9'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">${u.username[0].toUpperCase()}</div>
-        <span>${escH(u.username)}</span>
-      </div>`).join('');
-    } else dd.style.display='none';
-  } else { dd.style.display='none'; mentionState.active=false; }
-}
-function onEditorKey(id,ta,e) {
-  const dd=document.getElementById('mention-dd-'+id);
-  if(dd.style.display==='block') {
-    if(e.key==='Escape'){dd.style.display='none';e.preventDefault();}
-  }
-}
-function insertMention(editorId,username) {
-  const ta=document.getElementById(editorId); if(!ta) return;
-  const pos=ta.selectionStart, val=ta.value;
-  const before=val.substring(0,pos).replace(/@\w*$/,'');
-  ta.value=before+'@'+username+' '+val.substring(pos);
-  document.getElementById('mention-dd-'+editorId).style.display='none';
-  ta.focus();
-}
-let allUsersCache=[];
-async function preloadUsers() {
-  if(allUsersCache.length) return;
-  try { const r=await apiGet('/users'); if(r.ok) allUsersCache=r.data.users||[]; } catch(_){}
-}
-
-function openLightbox(src) {
-  const lb=document.createElement('div'); lb.className='lightbox';
-  lb.innerHTML=`<img src="${escH(src)}">`;
-  lb.onclick=()=>lb.remove(); document.body.appendChild(lb);
-}
-
-// ══════════════════════════════════════
-//  REPLY BOX
-// ══════════════════════════════════════
-function buildReplyBox(topic) {
-  const isLocked=topic.is_locked===true||topic.is_locked==='TRUE';
-  const c=document.getElementById('reply-box-container');
-  if(!currentUser) { c.innerHTML=`<div class="reply-box" style="text-align:center"><button class="btn btn-primary" onclick="showGoogleLogin()">כנס עם Google כדי להגיב</button></div>`; return; }
-  if(isLocked&&!isAdmin()) { c.innerHTML=`<div class="reply-box"><div style="color:var(--gray-500);font-size:14px">הנושא נעול</div></div>`; return; }
-  c.innerHTML=`<div class="reply-box">
-    <div class="reply-title">תגובה חדשה</div>
-    <div id="quote-preview-container"></div>
-    ${buildEditor('reply-content','','120px')}
-    <div class="reply-actions"><button class="btn btn-primary" onclick="submitReply()">שלח תגובה</button></div>
-  </div>`;
+function buildReplyBox(topic){
+  const locked=topic.is_locked===true||topic.is_locked==='TRUE';
+  const c=document.getElementById('reply-c');
+  if(!CU){c.innerHTML=`<div class="rbox" style="text-align:center"><button class="btn bp" onclick="showLogin()">כנס עם Google כדי להגיב</button></div>`;return;}
+  if(locked&&!isAdm()){c.innerHTML=`<div class="rbox"><div style="color:var(--g500);font-size:14px">הנושא נעול</div></div>`;return;}
+  c.innerHTML=`<div class="rbox"><div class="rbt">תגובה חדשה</div><div id="qpv-c"></div>${buildEditor('reply-ta','','120px')}<div style="display:flex;gap:8px;margin-top:9px"><button class="btn bp" onclick="submitReply()">שלח תגובה</button></div></div>`;
   preloadUsers();
 }
-
-function setQuote(postId,author,content) {
-  quotePostData={id:postId,author,content};
-  const c=document.getElementById('quote-preview-container');
-  if(c) c.innerHTML=`<div class="quote-preview">
-    <div><div style="font-weight:700;font-size:12px;color:var(--blue);margin-bottom:4px">${escH(author)}</div>
-    <div style="font-size:13px;color:var(--gray-600)">${escH(content.substring(0,150))}</div></div>
-    <button class="quote-preview-close" onclick="clearQuote()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>`;
-  document.getElementById('reply-content')?.focus();
+function setQ(pid,author,content){
+  quoteData={id:pid,author,content};
+  const c=document.getElementById('qpv-c');
+  if(c)c.innerHTML=`<div class="qpv"><div><div style="font-weight:700;font-size:12px;color:var(--blue);margin-bottom:3px">${H(author)}</div><div style="font-size:13px;color:var(--g600)">${H(content.substring(0,150))}</div></div><button class="qpc" onclick="clearQ()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>`;
+  document.getElementById('reply-ta')?.focus();
 }
-function clearQuote() { quotePostData=null; const c=document.getElementById('quote-preview-container'); if(c) c.innerHTML=''; }
-
-async function submitReply() {
-  const content=document.getElementById('reply-content')?.value?.trim();
-  if(!content||content.length<2){toast('תוכן קצר מדי','error');return;}
-  const body={topic_id:currentTopicId,content};
-  if(quotePostData) body.quote_of=quotePostData.id;
-  try {
-    const res=await apiPost('/posts',body);
-    if(res.ok){clearQuote();document.getElementById('reply-content').value='';toast('פורסם!','success');showTopicPage(currentTopicId);}
-    else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
+function clearQ(){quoteData=null;const c=document.getElementById('qpv-c');if(c)c.innerHTML='';}
+async function submitReply(){
+  const content=document.getElementById('reply-ta')?.value?.trim();
+  if(!content||content.length<2){toast('תוכן קצר מדי','e');return;}
+  const b={topic_id:CTI,content};if(quoteData)b.quote_of=quoteData.id;
+  try{const r=await aPost('/posts',b);if(r.ok){clearQ();document.getElementById('reply-ta').value='';toast('פורסם!','s');showTopic(CTI);}else toast(r.error,'e');}
+  catch(e){toast('שגיאת רשת','e');}
 }
 
-// ══════════════════════════════════════
-//  CREATE TOPIC
-// ══════════════════════════════════════
-function showCreateTopic() {
-  if(!currentUser){showGoogleLogin();return;}
-  if(!currentForumId){toast('בחר פורום קודם','error');return;}
+function showCreateTopic(){
+  if(!CU){showLogin();return;}if(!CFI){toast('בחר פורום קודם','e');return;}
   showPage('topic-page');
-  ['topic-breadcrumb','topic-header','posts-container','posts-pagination'].forEach(id=>document.getElementById(id).innerHTML='');
-  document.getElementById('reply-box-container').innerHTML=`<div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm)">
-    <div style="font-size:18px;font-weight:800;margin-bottom:18px">נושא חדש</div>
-    <div class="form-group"><label class="form-label">כותרת</label><input type="text" id="new-topic-title" class="form-input" placeholder="כותרת הנושא" maxlength="200"></div>
-    <div class="form-group"><label class="form-label">תוכן</label>${buildEditor('new-topic-content','','200px')}</div>
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <button class="btn btn-secondary" onclick="showForumPage('${currentForumId}','${currentCategoryId}')">ביטול</button>
-      <button class="btn btn-primary" onclick="submitNewTopic()">פרסם נושא</button>
+  ['tbread','topic-h','posts-c','posts-pag'].forEach(id=>document.getElementById(id).innerHTML='');
+  document.getElementById('reply-c').innerHTML=`<div style="background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:22px;box-shadow:var(--sh)">
+    <div style="font-size:17px;font-weight:800;margin-bottom:16px">נושא חדש</div>
+    <div class="fg"><label class="fl2">כותרת</label><input type="text" id="nt-t" class="fi" maxlength="200"></div>
+    <div class="fg"><label class="fl2">תוכן</label>${buildEditor('nt-c','','200px')}</div>
+    <div style="display:flex;gap:8px;margin-top:11px">
+      <button class="btn bs" onclick="showForum('${CFI}','${CCI}')">ביטול</button>
+      <button class="btn bp" onclick="submitNewT()">פרסם נושא</button>
     </div>
-  </div>`;
-  preloadUsers();
+  </div>`;preloadUsers();
+}
+async function submitNewT(){
+  const t=document.getElementById('nt-t').value.trim(),c=document.getElementById('nt-c').value.trim();
+  if(!t||t.length<3){toast('כותרת קצרה מדי','e');return;}if(!c||c.length<10){toast('תוכן קצר מדי','e');return;}
+  try{const r=await aPost('/topics',{forum_id:CFI,title:t,content:c});if(r.ok){toast('הנושא נפתח!','s');showTopic(r.data.topic_id);}else toast(r.error,'e');}
+  catch(e){toast('שגיאת רשת','e');}
 }
 
-async function submitNewTopic() {
-  const title=document.getElementById('new-topic-title').value.trim();
-  const content=document.getElementById('new-topic-content').value.trim();
-  if(!title||title.length<3){toast('כותרת קצרה מדי','error');return;}
-  if(!content||content.length<10){toast('תוכן קצר מדי','error');return;}
-  try {
-    const res=await apiPost('/topics',{forum_id:currentForumId,title,content});
-    if(res.ok){toast('הנושא נפתח!','success');showTopicPage(res.data.topic_id);}
-    else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
+async function doReact(pid,type){
+  if(!CU){showLogin();return;}
+  try{const r=await aPost(`/posts/${pid}/react`,{type});if(r.ok)showTopic(CTI,CTP);else toast(r.error,'e');}
+  catch(e){toast('שגיאת רשת','e');}
+}
+function openEPost(pid,content){document.getElementById('ep-id').value=pid;document.getElementById('ep-wrap').innerHTML=buildEditor('ep-ta',content,'155px');openModal('epost-modal');preloadUsers();}
+async function submitEPost(){
+  const pid=document.getElementById('ep-id').value,c=document.getElementById('ep-ta').value.trim();
+  if(!c)return;
+  try{const r=await aPost(`/posts/${pid}`,{content:c});if(r.ok){closeModal('epost-modal');showTopic(CTI,CTP);toast('נשמר','s');}else toast(r.error,'e');}
+  catch(e){toast('שגיאת רשת','e');}
+}
+async function delPost(pid){
+  if(!confirm('למחוק?'))return;
+  try{const r=await aDel(`/posts/${pid}`);if(r.ok){showTopic(CTI,CTP);toast('נמחק','s');}else toast(r.error,'e');}
+  catch(e){toast('שגיאת רשת','e');}
 }
 
-// ══════════════════════════════════════
-//  REACTIONS
-// ══════════════════════════════════════
-async function doReact(postId,type) {
-  if(!currentUser){showGoogleLogin();return;}
-  try {
-    const res=await apiPost(`/posts/${postId}/react`,{type});
-    if(res.ok) showTopicPage(currentTopicId,currentTopicPage);
-    else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
-}
-
-// ══════════════════════════════════════
-//  EDIT / DELETE POST
-// ══════════════════════════════════════
-function openEditPost(postId,content) {
-  document.getElementById('edit-post-id').value=postId;
-  document.getElementById('edit-post-editor-wrap').innerHTML=buildEditor('edit-post-content',content,'160px');
-  openModal('edit-post-modal');
-  preloadUsers();
-}
-async function submitEditPost() {
-  const postId=document.getElementById('edit-post-id').value;
-  const content=document.getElementById('edit-post-content').value.trim();
-  if(!content) return;
-  try {
-    const res=await apiPost(`/posts/${postId}`,{content});
-    if(res.ok){closeModal('edit-post-modal');showTopicPage(currentTopicId,currentTopicPage);toast('נשמר','success');}
-    else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
-}
-async function doDeletePost(postId) {
-  if(!confirm('למחוק את ההודעה?')) return;
-  try {
-    const res=await apiDelete(`/posts/${postId}`);
-    if(res.ok){showTopicPage(currentTopicId,currentTopicPage);toast('נמחק','success');}
-    else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
-}
-
-// ══════════════════════════════════════
-//  PROFILE
-// ══════════════════════════════════════
-async function showProfilePage(userId) {
-  showPage('profile-page');
-  document.getElementById('profile-content').innerHTML='<div class="loading"><div class="spinner"></div> טוען...</div>';
-  try {
-    const res=await apiGet(`/users/${userId}`);
-    if(!res.ok){document.getElementById('profile-content').innerHTML=emptyState('משתמש לא נמצא');return;}
-    const {user,posts,topics}=res.data;
-    const isMe=currentUser&&currentUser.id===userId;
-    const avHtml=user.avatar_url
-      ?`<img src="${escH(user.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-      :`<span>${(user.username||'?')[0].toUpperCase()}</span>`;
-    const emailRow=user.email?`<div style="font-size:13px;color:var(--gray-500);margin-top:6px;display:flex;align-items:center;gap:6px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${escH(user.email)}</div>`:'';
-    document.getElementById('profile-content').innerHTML=`
-      <div class="profile-header">
-        <div class="profile-avatar" style="background:${user.avatar_color||'#0059a9'}">${avHtml}</div>
-        <div style="flex:1">
-          <div class="profile-name">${escH(user.username)}</div>
-          <div style="margin-top:4px">${user.is_admin?`<span class="post-role role-admin">מנהל</span>`:user.is_banned?`<span class="post-role role-banned">חסום</span>`:`<span class="post-role role-member">חבר</span>`}</div>
-          ${emailRow}
-          ${user.bio?`<div style="font-size:14px;color:var(--gray-500);margin-top:8px">${escH(user.bio)}</div>`:''}
-          <div class="profile-stats">
-            <div class="profile-stat"><div class="profile-stat-num">${fmtN(user.reputation||0)}</div><div class="profile-stat-lbl">מוניטין</div></div>
-            <div class="profile-stat"><div class="profile-stat-num">${fmtN(user.post_count||0)}</div><div class="profile-stat-lbl">הודעות</div></div>
-          </div>
+async function showProfile(uid){
+  showPage('profile-page');document.getElementById('prof-c').innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{
+    const r=await aGet(`/users/${uid}`);if(!r.ok){document.getElementById('prof-c').innerHTML=ES('משתמש לא נמצא');return;}
+    const {user,posts,topics}=r.data;const isMe=CU&&CU.id===uid;
+    const av=user.avatar_url?`<img src="${H(user.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`<span>${(user.username||'?')[0].toUpperCase()}</span>`;
+    const em=user.email?`<div style="font-size:13px;color:var(--g500);margin-top:5px">${H(user.email)}</div>`:'';
+    document.getElementById('prof-c').innerHTML=`
+      <div class="profh">
+        <div class="profav" style="background:${user.avatar_color||'#0059a9'}">${av}</div>
+        <div style="flex:1"><div class="profn">${H(user.username)}</div>
+          <div style="margin-top:3px">${user.is_admin?'<span class="pr ra">מנהל</span>':user.is_banned?'<span class="pr rb">חסום</span>':'<span class="pr rm">חבר</span>'}</div>
+          ${em}${user.bio?`<div style="font-size:14px;color:var(--g500);margin-top:7px">${H(user.bio)}</div>`:''}
+          <div class="profs"><div><div class="profsn">${N(user.reputation||0)}</div><div class="profsl">מוניטין</div></div><div><div class="profsn">${N(user.post_count||0)}</div><div class="profsl">הודעות</div></div></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          ${isMe?`<button class="btn btn-secondary btn-sm" onclick="openEditProfile()">ערוך פרופיל</button>`:''}
-          ${isAdmin()&&!isMe?`<button class="btn btn-danger btn-sm" onclick="doBanUser('${userId}')">חסום/שחרר</button>
-          <button class="btn btn-secondary btn-sm" onclick="openRestrictModal('${userId}')">הגבל פרסום</button>`:''}
+        <div style="display:flex;flex-direction:column;gap:7px">
+          ${isMe?`<button class="btn bs bsm" onclick="openEProf()">ערוך פרופיל</button>`:''}
+          ${isAdm()&&!isMe?`<button class="btn bd bsm" onclick="banU('${uid}')">חסום/שחרר</button><button class="btn bs bsm" onclick="openRestr('${uid}')">הגבל</button>`:''}
         </div>
       </div>
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('tab-topics',this)">נושאים (${topics.length})</button>
-        <button class="tab-btn" onclick="switchTab('tab-posts',this)">הודעות (${posts.length})</button>
+        <button class="tabb on" onclick="switchTab('tt-t',this)">נושאים (${topics.length})</button>
+        <button class="tabb" onclick="switchTab('tt-p',this)">הודעות (${posts.length})</button>
       </div>
-      <div id="tab-topics" class="tab-content active">
-        ${topics.length?`<div class="search-results">${topics.map(t=>`<div class="sr-item" onclick="showTopicPage('${t.id}')"><div class="sr-title">${escH(t.title)}</div><div class="sr-meta">${fmtDate(t.created)}</div></div>`).join('')}</div>`:emptyState('אין נושאים')}
-      </div>
-      <div id="tab-posts" class="tab-content">
-        ${posts.length?`<div class="search-results">${posts.map(p=>`<div class="sr-item"><div style="font-size:14px;color:var(--gray-700)">${escH(p.content.substring(0,150))}</div><div class="sr-meta">${fmtDate(p.created)}</div></div>`).join('')}</div>`:emptyState('אין הודעות')}
-      </div>`;
-  } catch(e){document.getElementById('profile-content').innerHTML=emptyState('שגיאת רשת');}
+      <div id="tt-t" class="tabc on">${topics.length?`<div class="srs">${topics.map(t=>`<div class="sri" onclick="showTopic('${t.id}')"><div class="srt">${H(t.title)}</div><div class="srm">${D(t.created)}</div></div>`).join('')}</div>`:ES('אין נושאים')}</div>
+      <div id="tt-p" class="tabc">${posts.length?`<div class="srs">${posts.map(p=>`<div class="sri"><div style="font-size:14px;color:var(--g700)">${H(p.content.substring(0,150))}</div><div class="srm">${D(p.created)}</div></div>`).join('')}</div>`:ES('אין הודעות')}</div>`;
+  }catch(e){document.getElementById('prof-c').innerHTML=ES('שגיאת רשת');}
+}
+function switchTab(id,btn){document.querySelectorAll('.tabc').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tabb').forEach(b=>b.classList.remove('on'));document.getElementById(id).classList.add('on');if(btn)btn.classList.add('on');}
+function openEProf(){
+  if(!CU)return;
+  document.getElementById('ep-un').value=CU.username||'';
+  document.getElementById('ep-bio').value=CU.bio||'';
+  document.getElementById('ep-av').value=CU.avatar_url||'';
+  document.getElementById('ep-se').checked=!!CU.show_email;
+  document.getElementById('ep-err').style.display='none';
+  openModal('eprof-modal');
+}
+async function submitEProf(){
+  try{const r=await aPost(`/users/${CU.id}`,{username:document.getElementById('ep-un').value.trim(),bio:document.getElementById('ep-bio').value.trim(),avatar_url:document.getElementById('ep-av').value.trim(),show_email:document.getElementById('ep-se').checked});
+    if(r.ok){closeModal('eprof-modal');CU={...CU,...r.data.user};localStorage.setItem('fu',JSON.stringify(CU));updUI();showProfile(CU.id);toast('עודכן','s');}
+    else showErr('ep-err',r.error);
+  }catch(e){showErr('ep-err','שגיאת רשת');}
 }
 
-function switchTab(tabId,btn) {
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  if(btn) btn.classList.add('active');
+async function pinT(tid){const r=await aPost(`/topics/${tid}/pin`);if(r.ok){showTopic(tid,CTP);toast('עודכן','s');}else toast(r.error,'e');}
+async function lockT(tid){const r=await aPost(`/topics/${tid}/lock`);if(r.ok){showTopic(tid,CTP);toast('עודכן','s');}else toast(r.error,'e');}
+async function delT(tid){
+  if(!confirm('למחוק?'))return;
+  const r=await aDel(`/topics/${tid}`);
+  if(r.ok){toast('נמחק','s');const fr=await aGet('/forums');if(fr.ok)allForums=fr.data.forums||[];showForum(CFI,CCI);}
+  else toast(r.error,'e');
+}
+async function banU(uid){
+  if(!confirm('לחסום/לשחרר?'))return;
+  const r=await aPost(`/users/${uid}/ban`);
+  if(r.ok){toast(r.data.is_banned?'נחסם':'שוחרר','s');showProfile(uid);}else toast(r.error,'e');
 }
 
-function openEditProfile() {
-  if(!currentUser) return;
-  document.getElementById('edit-username').value=currentUser.username||'';
-  document.getElementById('edit-bio').value=currentUser.bio||'';
-  document.getElementById('edit-avatar-url').value=currentUser.avatar_url||'';
-  document.getElementById('edit-show-email').checked=!!currentUser.show_email;
-  document.getElementById('edit-profile-error').style.display='none';
-  openModal('edit-profile-modal');
-}
-async function submitEditProfile() {
-  const username=document.getElementById('edit-username').value.trim();
-  const bio=document.getElementById('edit-bio').value.trim();
-  const avatar_url=document.getElementById('edit-avatar-url').value.trim();
-  const show_email=document.getElementById('edit-show-email').checked;
-  try {
-    const res=await apiPost(`/users/${currentUser.id}`,{username,bio,avatar_url,show_email});
-    if(res.ok){
-      closeModal('edit-profile-modal');
-      currentUser={...currentUser,...res.data.user};
-      localStorage.setItem('forum_user',JSON.stringify(currentUser));
-      updateUserUI(); showProfilePage(currentUser.id); toast('הפרופיל עודכן','success');
-    } else showErr('edit-profile-error',res.error);
-  } catch(e){showErr('edit-profile-error','שגיאת רשת');}
-}
-
-// ══════════════════════════════════════
-//  ADMIN ACTIONS
-// ══════════════════════════════════════
-async function adminPinTopic(topicId) {
-  const res=await apiPost(`/topics/${topicId}/pin`);
-  if(res.ok){showTopicPage(topicId,currentTopicPage);toast('עודכן','success');}else toast(res.error,'error');
-}
-async function adminLockTopic(topicId) {
-  const res=await apiPost(`/topics/${topicId}/lock`);
-  if(res.ok){showTopicPage(topicId,currentTopicPage);toast('עודכן','success');}else toast(res.error,'error');
-}
-async function adminDeleteTopic(topicId) {
-  if(!confirm('למחוק את הנושא?')) return;
-  const res=await apiDelete(`/topics/${topicId}`);
-  if(res.ok){
-    toast('נמחק','success');
-    // Refresh forum counts
-    const fr=await apiGet('/forums'); if(fr.ok) allForums=fr.data.forums||[];
-    showForumPage(currentForumId,currentCategoryId);
-  } else toast(res.error,'error');
-}
-async function doBanUser(userId) {
-  if(!confirm('לחסום/לשחרר משתמש זה?')) return;
-  const res=await apiPost(`/users/${userId}/ban`);
-  if(res.ok){
-    toast(res.data.is_banned?'המשתמש נחסם':'המשתמש שוחרר','success');
-    showProfilePage(userId);
-  } else toast(res.error,'error');
-}
-
-async function showUsersPage() {
-  openModal('users-modal');
-  document.getElementById('users-list-content').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try {
-    const res=await apiGet('/users');
-    if(!res.ok){document.getElementById('users-list-content').innerHTML='<div style="color:var(--red)">שגיאה</div>';return;}
-    const users=res.data.users||[];
-    document.getElementById('users-list-content').innerHTML=`<div style="max-height:420px;overflow-y:auto">${users.map(u=>`
-      <div class="user-row ${u.is_banned?'user-banned':''}">
-        <div style="width:34px;height:34px;border-radius:50%;background:${u.avatar_color||'#0059a9'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0">
-          ${u.avatar_url?`<img src="${escH(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.username[0].toUpperCase()}
-        </div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:600">${escH(u.username)}${u.is_admin?' (מנהל)':''}${u.is_banned?' <span style="color:var(--red);font-size:12px">חסום</span>':''}</div>
-          <div style="font-size:12px;color:var(--gray-400)">${fmtN(u.reputation||0)} מוניטין · ${fmtN(u.post_count||0)} הודעות</div>
-        </div>
-        <button class="btn btn-sm btn-${u.is_banned?'secondary':'danger'}" onclick="doBanUser('${u.id}')">${u.is_banned?'שחרר':'חסום'}</button>
-        <button class="btn btn-sm btn-secondary" onclick="closeModal('users-modal');openRestrictModal('${u.id}')">הגבל</button>
+async function showUsers(){
+  openModal('users-modal');document.getElementById('users-c').innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{const r=await aGet('/users');if(!r.ok){document.getElementById('users-c').innerHTML='שגיאה';return;}
+    allUsers=r.data.users||[];
+    document.getElementById('users-c').innerHTML=`<div style="max-height:400px;overflow-y:auto">${allUsers.map(u=>`
+      <div class="ur"><div style="width:32px;height:32px;border-radius:50%;background:${u.avatar_color||'#0059a9'};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0">${u.avatar_url?`<img src="${H(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:u.username[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0"><div style="font-weight:600">${H(u.username)}${u.is_admin?' (מנהל)':''}${u.is_banned?' <span style="color:var(--red);font-size:11px">חסום</span>':''}</div><div style="font-size:12px;color:var(--g400)">${N(u.reputation||0)} מוניטין</div></div>
+        <button class="btn bsm ${u.is_banned?'bs':'bd'}" onclick="banU('${u.id}')">${u.is_banned?'שחרר':'חסום'}</button>
+        <button class="btn bsm bs" onclick="closeModal('users-modal');openRestr('${u.id}')">הגבל</button>
       </div>`).join('')}</div>`;
-    allUsersCache=users;
-  } catch(e){document.getElementById('users-list-content').innerHTML=emptyState('שגיאת רשת');}
+  }catch(e){document.getElementById('users-c').innerHTML=ES('שגיאת רשת');}
 }
 
-// ── Restrictions ──
-async function openRestrictModal(userId) {
-  restrictingUserId=userId;
-  openModal('restrict-modal');
-  document.getElementById('restrict-content').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try {
-    const [rRes,fRes,cRes]=await Promise.all([
-      apiGet(`/users/${userId}/restrictions`),
-      apiGet('/forums'),
-      apiGet('/categories')
-    ]);
-    const r=rRes.data.restrictions||{};
-    const forums=fRes.data.forums||[];
-    const cats=cRes.data.categories||[];
-    document.getElementById('restrict-content').innerHTML=`
-      <div class="form-group">
-        <label class="form-label">מצב הגבלה</label>
-        <select id="restrict-mode" class="form-input">
-          <option value="">ללא הגבלה</option>
-          <option value="blacklist" ${r.mode==='blacklist'?'selected':''}>רשימה שחורה (חסום מ...)</option>
-          <option value="whitelist" ${r.mode==='whitelist'?'selected':''}>רשימה לבנה (מותר רק ב...)</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">קטגוריות</label>
-        ${cats.map(c=>`<label style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:14px"><input type="checkbox" class="restrict-cat" value="${c.id}" ${(r.categories||[]).includes(c.id)?'checked':''}>${escH(c.name)}</label>`).join('')}
-      </div>
-      <div class="form-group"><label class="form-label">פורומים</label>
-        ${forums.map(f=>`<label style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:14px"><input type="checkbox" class="restrict-forum" value="${f.id}" ${(r.forums||[]).includes(f.id)?'checked':''}>${escH(f.name)}</label>`).join('')}
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="clearRestrictions()">הסר כל ההגבלות</button>`;
-  } catch(e){document.getElementById('restrict-content').innerHTML=emptyState('שגיאת רשת');}
+async function openRestr(uid){
+  restrUID=uid;openModal('restr-modal');document.getElementById('restr-c').innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{
+    const [rr,fr,cr]=await Promise.all([aGet(`/users/${uid}/restrictions`),aGet('/forums'),aGet('/categories')]);
+    const rv=rr.data.restrictions||{};const forums=fr.data.forums||[];const cats=cr.data.categories||[];
+    document.getElementById('restr-c').innerHTML=`
+      <div class="fg"><label class="fl2">מצב</label><select id="rm" class="fi"><option value="">ללא הגבלה</option><option value="blacklist" ${rv.mode==='blacklist'?'selected':''}>רשימה שחורה (חסום מ...)</option><option value="whitelist" ${rv.mode==='whitelist'?'selected':''}>רשימה לבנה (מותר רק ב...)</option></select></div>
+      <div class="fg"><label class="fl2">קטגוריות</label>${cats.map(c=>`<label style="display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:14px"><input type="checkbox" class="rc" value="${c.id}" ${(rv.categories||[]).includes(c.id)?'checked':''}> ${H(c.name)}</label>`).join('')}</div>
+      <div class="fg"><label class="fl2">פורומים</label>${forums.map(f=>`<label style="display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:14px"><input type="checkbox" class="rf" value="${f.id}" ${(rv.forums||[]).includes(f.id)?'checked':''}> ${H(f.name)}</label>`).join('')}</div>
+      <button class="btn bg bsm" onclick="clearRestr()">הסר כל ההגבלות</button>`;
+  }catch(e){document.getElementById('restr-c').innerHTML=ES('שגיאת רשת');}
 }
-async function submitRestrictions() {
-  const mode=document.getElementById('restrict-mode').value;
-  const forums=[...document.querySelectorAll('.restrict-forum:checked')].map(cb=>cb.value);
-  const categories=[...document.querySelectorAll('.restrict-cat:checked')].map(cb=>cb.value);
-  const body=mode?{mode,forums,categories,topics:[]}:null;
-  try {
-    const res=await apiPost(`/users/${restrictingUserId}/restrictions`,body||{});
-    if(res.ok){closeModal('restrict-modal');toast('הגבלות עודכנו','success');}
-    else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
+async function submitRestr(){
+  const mode=document.getElementById('rm').value;
+  const forums=[...document.querySelectorAll('.rf:checked')].map(cb=>cb.value);
+  const categories=[...document.querySelectorAll('.rc:checked')].map(cb=>cb.value);
+  try{const r=await aPost(`/users/${restrUID}/restrictions`,mode?{mode,forums,categories,topics:[]}:{});
+    if(r.ok){closeModal('restr-modal');toast('עודכן','s');}else toast(r.error,'e');
+  }catch(e){toast('שגיאת רשת','e');}
 }
-async function clearRestrictions() {
-  try {
-    await apiPost(`/users/${restrictingUserId}/restrictions`,{});
-    closeModal('restrict-modal'); toast('ההגבלות הוסרו','success');
-  } catch(e){}
+async function clearRestr(){try{await aPost(`/users/${restrUID}/restrictions`,{});closeModal('restr-modal');toast('הוסר','s');}catch(e){}}
+
+async function showAdminSettings(){
+  showPage('admin-settings-page');document.getElementById('as-c').innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{const r=await aGet('/admin/settings');if(!r.ok){document.getElementById('as-c').innerHTML=ES('שגיאה');return;}
+    const s=r.data.settings||{};
+    document.getElementById('as-c').innerHTML=`<div style="background:var(--w);border:1px solid var(--g200);border-radius:var(--r);padding:22px;box-shadow:var(--sh)">
+      <div class="tgr"><div><div class="tgl">הצג שמות מלייקים</div><div class="tgd">ריחוף על הלייקים יציג מי לייק</div></div><label class="tg"><input type="checkbox" id="sln" ${s.show_like_names!==false?'checked':''}><span class="tgs"></span></label></div>
+      <div class="tgr"><div><div class="tgl">הצג שמות דיסלייקים</div></div><label class="tg"><input type="checkbox" id="sdn" ${s.show_dislike_names?'checked':''}><span class="tgs"></span></label></div>
+      <div class="tgr"><div><div class="tgl">אפשר הרשמות חדשות</div></div><label class="tg"><input type="checkbox" id="sar" ${s.allow_registration!==false?'checked':''}><span class="tgs"></span></label></div>
+      <div class="fg" style="margin-top:14px"><label class="fl2">אורך מינימלי לפוסט</label><input type="number" id="smin" class="fi" value="${s.min_post_length||2}" min="1"></div>
+      <div class="fg"><label class="fl2">אורך מקסימלי לפוסט</label><input type="number" id="smax" class="fi" value="${s.max_post_length||10000}" min="100"></div>
+      <button class="btn bp" style="margin-top:7px" onclick="saveAS()">שמור</button>
+    </div>`;
+  }catch(e){document.getElementById('as-c').innerHTML=ES('שגיאת רשת');}
+}
+async function saveAS(){
+  try{const r=await aPost('/admin/settings',{show_like_names:document.getElementById('sln').checked,show_dislike_names:document.getElementById('sdn').checked,allow_registration:document.getElementById('sar').checked,min_post_length:parseInt(document.getElementById('smin').value)||2,max_post_length:parseInt(document.getElementById('smax').value)||10000});
+    if(r.ok)toast('נשמר','s');else toast(r.error,'e');
+  }catch(e){toast('שגיאת רשת','e');}
 }
 
-// ── Admin Settings ──
-async function showAdminSettings() {
-  showPage('admin-settings-page');
-  document.getElementById('admin-settings-content').innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try {
-    const res=await apiGet('/admin/settings');
-    if(!res.ok){document.getElementById('admin-settings-content').innerHTML=emptyState('שגיאה');return;}
-    const s=res.data.settings||{};
-    document.getElementById('admin-settings-content').innerHTML=`
-      <div style="background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:0">
-        <div class="toggle-row">
-          <div><div class="toggle-label">הצג שמות מלייקים</div><div class="toggle-desc">ריחוף על מספר הלייקים יציג מי לייק</div></div>
-          <label class="toggle"><input type="checkbox" id="s-like-names" ${s.show_like_names!==false?'checked':''}><span class="toggle-slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div><div class="toggle-label">הצג שמות דיסלייקים</div><div class="toggle-desc">ריחוף על מספר הדיסלייקים יציג מי דיסלייק</div></div>
-          <label class="toggle"><input type="checkbox" id="s-dislike-names" ${s.show_dislike_names?'checked':''}><span class="toggle-slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div><div class="toggle-label">אפשר הרשמות חדשות</div></div>
-          <label class="toggle"><input type="checkbox" id="s-allow-reg" ${s.allow_registration!==false?'checked':''}><span class="toggle-slider"></span></label>
-        </div>
-        <div class="form-group" style="margin-top:16px"><label class="form-label">אורך מינימלי לפוסט (תווים)</label><input type="number" id="s-min-post" class="form-input" value="${s.min_post_length||2}" min="1" max="500"></div>
-        <div class="form-group"><label class="form-label">אורך מקסימלי לפוסט (תווים)</label><input type="number" id="s-max-post" class="form-input" value="${s.max_post_length||10000}" min="100"></div>
-        <div style="margin-top:8px"><button class="btn btn-primary" onclick="saveAdminSettings()">שמור הגדרות</button></div>
-      </div>`;
-  } catch(e){document.getElementById('admin-settings-content').innerHTML=emptyState('שגיאת רשת');}
+async function loadNotifs(){
+  if(!CU)return;
+  try{const r=await aGet('/notifications');if(!r.ok)return;
+    const b=document.getElementById('nbadge'),u=r.data.unread||0;
+    if(u>0){b.textContent=u>9?'9+':u;b.style.display='flex';}else b.style.display='none';
+  }catch(_){}
 }
-async function saveAdminSettings() {
-  const body={
-    show_like_names:    document.getElementById('s-like-names').checked,
-    show_dislike_names: document.getElementById('s-dislike-names').checked,
-    allow_registration: document.getElementById('s-allow-reg').checked,
-    min_post_length:    parseInt(document.getElementById('s-min-post').value)||2,
-    max_post_length:    parseInt(document.getElementById('s-max-post').value)||10000,
-  };
-  try {
-    const res=await apiPost('/admin/settings',body);
-    if(res.ok) toast('הגדרות נשמרו','success'); else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
+async function showNotifs(){
+  showPage('notifications-page');const c=document.getElementById('notif-c');
+  c.innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{const r=await aGet('/notifications');if(!r.ok){c.innerHTML=ES('שגיאה');return;}
+    await aPost('/notifications/read');document.getElementById('nbadge').style.display='none';
+    const ns=r.data.notifications||[];
+    c.innerHTML=ns.length?`<div class="srs">${ns.map(n=>`<div class="ni ${n.read?'':'unr'}" onclick="showTopic('${n.data.topic_id}')"><div class="nit">תויגת על ידי ${H(n.data.by_username||'')}</div><div class="nis">בנושא: ${H(n.data.topic_title||'')} · ${D(n.created)}</div></div>`).join('')}</div>`:ES('אין התראות');
+  }catch(e){c.innerHTML=ES('שגיאת רשת');}
 }
 
-// ══════════════════════════════════════
-//  NOTIFICATIONS
-// ══════════════════════════════════════
-async function loadNotifications() {
-  if(!currentUser) return;
-  try {
-    const res=await apiGet('/notifications');
-    if(!res.ok) return;
-    const {unread}=res.data;
-    const badge=document.getElementById('notif-badge');
-    if(unread>0){badge.textContent=unread>9?'9+':unread;badge.style.display='flex';}
-    else badge.style.display='none';
-  } catch(_){}
+async function submitCat(){
+  const name=document.getElementById('cat-nm').value.trim();
+  if(!name){showErr('cat-err','שם חסר');return;}
+  try{const r=await aPost('/categories',{name,description:document.getElementById('cat-ds').value.trim(),color:document.getElementById('cat-cl').value});
+    if(r.ok){closeModal('ccat-modal');toast('נוצרה!','s');loadHome();}else showErr('cat-err',r.error);
+  }catch(e){showErr('cat-err','שגיאת רשת');}
 }
-async function showNotifications() {
-  showPage('notifications-page');
-  const c=document.getElementById('notif-list');
-  c.innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try {
-    const res=await apiGet('/notifications');
-    if(!res.ok){c.innerHTML=emptyState('שגיאה');return;}
-    await apiPost('/notifications/read');
-    document.getElementById('notif-badge').style.display='none';
-    const notifs=res.data.notifications||[];
-    if(!notifs.length){c.innerHTML=emptyState('אין התראות');return;}
-    c.innerHTML=`<div class="search-results">${notifs.map(n=>`
-      <div class="notif-item ${n.read?'':'unread'}" onclick="showTopicPage('${n.data.topic_id}')">
-        <div class="notif-item-title">תויגת על ידי ${escH(n.data.by_username||'')}</div>
-        <div class="notif-item-sub">בנושא: ${escH(n.data.topic_title||'')} · ${fmtDate(n.created)}</div>
-      </div>`).join('')}</div>`;
-  } catch(e){c.innerHTML=emptyState('שגיאת רשת');}
+async function delCat(id){if(!confirm('למחוק?'))return;const r=await aDel(`/categories/${id}`);if(r.ok){toast('נמחק','s');loadHome();}else toast(r.error,'e');}
+function openCForum(cid){cForumCatId=cid;document.getElementById('for-nm').value='';document.getElementById('for-ds').value='';openModal('cforum-modal');}
+async function submitForum(){
+  const name=document.getElementById('for-nm').value.trim();if(!name){showErr('for-err','שם חסר');return;}
+  try{const r=await aPost('/forums',{name,description:document.getElementById('for-ds').value.trim(),category_id:cForumCatId});
+    if(r.ok){closeModal('cforum-modal');toast('נוצר!','s');loadHome();}else showErr('for-err',r.error);
+  }catch(e){showErr('for-err','שגיאת רשת');}
+}
+function openEForum(id,name,desc){eForumData={id};document.getElementById('ef-nm').value=name;document.getElementById('ef-ds').value=desc;openModal('eforum-modal');}
+async function submitEForum(){
+  if(!eForumData)return;
+  try{const r=await aPost(`/forums/${eForumData.id}`,{name:document.getElementById('ef-nm').value.trim(),description:document.getElementById('ef-ds').value.trim()});
+    if(r.ok){closeModal('eforum-modal');toast('עודכן','s');loadHome();}else toast(r.error,'e');
+  }catch(e){toast('שגיאת רשת','e');}
+}
+async function delForum(id){if(!confirm('למחוק?'))return;const r=await aDel(`/forums/${id}`);if(r.ok){toast('נמחק','s');goHome();}else toast(r.error,'e');}
+
+function doSearch(q){if(!q)return;showPage('search-page');document.getElementById('srch-inp').value=q;doSearchMain();}
+async function doSearchMain(){
+  const q=document.getElementById('srch-inp').value.trim();if(!q||q.length<2)return;
+  const c=document.getElementById('srch-c');c.innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{const r=await aGet('/search',{q});if(!r.ok){c.innerHTML=ES('שגיאה');return;}
+    const all=[...(r.data.topics||[]).map(t=>({...t,_t:'t'})),...(r.data.posts||[]).map(p=>({...p,_t:'p'}))];
+    c.innerHTML=all.length?`<div class="srs">${all.map(x=>x._t==='t'?`<div class="sri" onclick="showTopic('${x.id}')"><div class="srt">${H(x.title)}</div></div>`:`<div class="sri"><div style="font-size:14px;color:var(--g600)">${H(x.content.substring(0,150))}</div></div>`).join('')}</div>`:ES('לא נמצאו תוצאות');
+  }catch(e){c.innerHTML=ES('שגיאת רשת');}
+}
+async function loadLatest(){const c=document.getElementById('latest-c');c.innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{const r=await aGet('/latest');const ts=r.data.topics||[];c.innerHTML=ts.length?`<div class="srs">${ts.map(t=>`<div class="sri" onclick="showTopic('${t.id}')"><div class="srt">${H(t.title)}</div><div class="srm">${t.reply_count||0} תגובות · ${D(t.last_post)}</div></div>`).join('')}</div>`:ES('אין נתונים');}
+  catch(e){c.innerHTML=ES('שגיאת רשת');}
+}
+async function loadPopular(){const c=document.getElementById('popular-c');c.innerHTML='<div class="ld"><div class="sp"></div></div>';
+  try{const r=await aGet('/popular');const ts=r.data.topics||[];c.innerHTML=ts.length?`<div class="srs">${ts.map(t=>`<div class="sri" onclick="showTopic('${t.id}')"><div class="srt">${H(t.title)}</div><div class="srm">${t.view_count||0} צפיות · ${t.reply_count||0} תגובות</div></div>`).join('')}</div>`:ES('אין נתונים');}
+  catch(e){c.innerHTML=ES('שגיאת רשת');}
 }
 
-// ══════════════════════════════════════
-//  CATEGORY / FORUM ADMIN
-// ══════════════════════════════════════
-async function submitCreateCategory() {
-  const name=document.getElementById('cat-name').value.trim();
-  const description=document.getElementById('cat-desc').value.trim();
-  const color=document.getElementById('cat-color').value;
-  if(!name){showErr('cat-error','שם חסר');return;}
-  try {
-    const res=await apiPost('/categories',{name,description,color});
-    if(res.ok){closeModal('create-cat-modal');toast('קטגוריה נוצרה!','success');loadHome();}
-    else showErr('cat-error',res.error);
-  } catch(e){showErr('cat-error','שגיאת רשת');}
-}
-async function deleteCategory(catId) {
-  if(!confirm('למחוק קטגוריה זו?')) return;
-  const res=await apiDelete(`/categories/${catId}`);
-  if(res.ok){toast('נמחק','success');loadHome();}else toast(res.error,'error');
-}
-let createForumCatId=null;
-function openCreateForumModal(catId) {
-  createForumCatId=catId;
-  document.getElementById('forum-name-input').value='';
-  document.getElementById('forum-desc-input').value='';
-  openModal('create-forum-modal');
-}
-async function submitCreateForum() {
-  const name=document.getElementById('forum-name-input').value.trim();
-  const description=document.getElementById('forum-desc-input').value.trim();
-  if(!name){showErr('forum-create-error','שם חסר');return;}
-  try {
-    const res=await apiPost('/forums',{name,description,category_id:createForumCatId});
-    if(res.ok){closeModal('create-forum-modal');toast('פורום נוצר!','success');loadHome();}
-    else showErr('forum-create-error',res.error);
-  } catch(e){showErr('forum-create-error','שגיאת רשת');}
-}
-function openEditForumModal(id,name,desc) {
-  editingForumData={id};
-  document.getElementById('edit-forum-name').value=name;
-  document.getElementById('edit-forum-desc').value=desc;
-  openModal('edit-forum-modal');
-}
-async function submitEditForum() {
-  if(!editingForumData) return;
-  const name=document.getElementById('edit-forum-name').value.trim();
-  const description=document.getElementById('edit-forum-desc').value.trim();
-  try {
-    const res=await apiPost(`/forums/${editingForumData.id}`,{name,description});
-    if(res.ok){closeModal('edit-forum-modal');toast('עודכן','success');loadHome();}
-    else toast(res.error,'error');
-  } catch(e){toast('שגיאת רשת','error');}
-}
-async function deleteForum(forumId) {
-  if(!confirm('למחוק פורום זה?')) return;
-  const res=await apiDelete(`/forums/${forumId}`);
-  if(res.ok){toast('נמחק','success');goHome();}else toast(res.error,'error');
-}
-
-// ══════════════════════════════════════
-//  SEARCH
-// ══════════════════════════════════════
-function doSearch(q) { if(!q) return; showPage('search-page'); document.getElementById('search-main-input').value=q; doSearchMain(); }
-async function doSearchMain() {
-  const q=document.getElementById('search-main-input').value.trim();
-  if(!q||q.length<2) return;
-  const c=document.getElementById('search-results-container');
-  c.innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try {
-    const res=await apiGet('/search',{q});
-    if(!res.ok){c.innerHTML=emptyState('שגיאה');return;}
-    const {topics,posts}=res.data;
-    const all=[...(topics||[]).map(t=>({...t,_type:'topic'})),...(posts||[]).map(p=>({...p,_type:'post'}))];
-    c.innerHTML=all.length?`<div class="search-results">${all.map(r=>r._type==='topic'
-      ?`<div class="sr-item" onclick="showTopicPage('${r.id}')"><div class="sr-title">${escH(r.title)}</div></div>`
-      :`<div class="sr-item"><div style="font-size:14px;color:var(--gray-600)">${escH(r.content.substring(0,150))}</div></div>`
-    ).join('')}</div>`:emptyState('לא נמצאו תוצאות');
-  } catch(e){c.innerHTML=emptyState('שגיאת רשת');}
-}
-
-async function loadLatest() {
-  const c=document.getElementById('latest-container'); c.innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try { const res=await apiGet('/latest'); c.innerHTML=(res.data.topics||[]).length?`<div class="search-results">${(res.data.topics||[]).map(t=>`<div class="sr-item" onclick="showTopicPage('${t.id}')"><div class="sr-title">${escH(t.title)}</div><div class="sr-meta">${t.reply_count||0} תגובות · ${fmtDate(t.last_post)}</div></div>`).join('')}</div>`:emptyState('אין נתונים'); } catch(e){c.innerHTML=emptyState('שגיאת רשת');}
-}
-async function loadPopular() {
-  const c=document.getElementById('popular-container'); c.innerHTML='<div class="loading"><div class="spinner"></div></div>';
-  try { const res=await apiGet('/popular'); c.innerHTML=(res.data.topics||[]).length?`<div class="search-results">${(res.data.topics||[]).map(t=>`<div class="sr-item" onclick="showTopicPage('${t.id}')"><div class="sr-title">${escH(t.title)}</div><div class="sr-meta">${t.view_count||0} צפיות · ${t.reply_count||0} תגובות</div></div>`).join('')}</div>`:emptyState('אין נתונים'); } catch(e){c.innerHTML=emptyState('שגיאת רשת');}
-}
-
-// ══════════════════════════════════════
-//  PAGINATION
-// ══════════════════════════════════════
-function buildPagination(cid,current,total,onClick) {
-  const el=document.getElementById(cid); if(!el||total<=1){if(el)el.innerHTML='';return;}
-  let h=`<button class="page-btn" ${current===1?'disabled':''} onclick="(${onClick.toString()})(${current-1})">›</button>`;
-  for(let i=1;i<=total;i++) {
-    if(total>7&&Math.abs(i-current)>2&&i!==1&&i!==total){if(i===2||i===total-1)h+='<span style="padding:0 4px;color:var(--gray-400)">...</span>';continue;}
-    h+=`<button class="page-btn ${i===current?'active':''}" onclick="(${onClick.toString()})(${i})">${i}</button>`;
-  }
-  h+=`<button class="page-btn" ${current===total?'disabled':''} onclick="(${onClick.toString()})(${current+1})">‹</button>`;
+function buildPag(cid,cur,tot,fn){
+  const el=document.getElementById(cid);if(!el||tot<=1){if(el)el.innerHTML='';return;}
+  let h=`<button class="pgb" ${cur===1?'disabled':''} onclick="(${fn.toString()})(${cur-1})">›</button>`;
+  for(let i=1;i<=tot;i++){if(tot>7&&Math.abs(i-cur)>2&&i!==1&&i!==tot){if(i===2||i===tot-1)h+='<span style="padding:0 3px;color:var(--g400)">...</span>';continue;}h+=`<button class="pgb ${i===cur?'on':''}" onclick="(${fn.toString()})(${i})">${i}</button>`;}
+  h+=`<button class="pgb" ${cur===tot?'disabled':''} onclick="(${fn.toString()})(${cur+1})">‹</button>`;
   el.innerHTML=h;
 }
 
-// ══════════════════════════════════════
-//  MODAL
-// ══════════════════════════════════════
-function openModal(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden';}
-function closeModal(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow='';}
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);}));
+function openModal(id){document.getElementById(id).classList.remove('hid');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.add('hid');document.body.style.overflow='';}
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);}));});
 
-// ══════════════════════════════════════
-//  TOAST
-// ══════════════════════════════════════
-function toast(msg,type='info') {
-  const c=document.getElementById('toast-container'),t=document.createElement('div');
-  t.className=`toast toast-${type}`; t.textContent=msg;
-  c.appendChild(t); setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},3000);
-}
-
-// ══════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════
-function showErr(id,msg){const el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
-function emptyState(text){return `<div class="empty-state"><div class="empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div>${escH(text)}</div></div>`;}
-function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');}
-function escA(s){return String(s||'').replace(/'/g,"\\'").replace(/\n/g,' ').substring(0,200);}
-function fmtN(n){n=parseInt(n)||0;if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'k';return n.toString();}
-function fmtDate(d){
-  if(!d) return '';
-  const date=new Date(d),diff=Math.floor((new Date()-date)/1000);
-  if(diff<60) return 'לפני '+diff+' שניות';
-  if(diff<3600) return 'לפני '+Math.floor(diff/60)+' דקות';
-  if(diff<86400) return 'לפני '+Math.floor(diff/3600)+' שעות';
-  if(diff<604800) return 'לפני '+Math.floor(diff/86400)+' ימים';
-  return date.toLocaleDateString('he-IL');
-}
+function toast(m,t){const c=document.getElementById('tc'),el=document.createElement('div');el.className=`toast t${t||'i'}`;el.textContent=m;c.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},3000);}
+function showErr(id,m){const el=document.getElementById(id);if(el){el.textContent=m;el.style.display='block';}}
+function ES(t){return `<div class="es"><div style="margin-bottom:10px;display:flex;justify-content:center;color:var(--g300)"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div>${H(t)}</div></div>`;}
+function H(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');}
+function A(s){return String(s||'').replace(/'/g,"\\'").replace(/\n/g,' ').substring(0,200);}
+function N(n){n=parseInt(n)||0;if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'k';return n.toString();}
+function D(d){if(!d)return'';const dt=new Date(d),df=Math.floor((new Date()-dt)/1000);if(df<60)return'לפני '+df+' שניות';if(df<3600)return'לפני '+Math.floor(df/60)+' דקות';if(df<86400)return'לפני '+Math.floor(df/3600)+' שעות';if(df<604800)return'לפני '+Math.floor(df/86400)+' ימים';return dt.toLocaleDateString('he-IL');}
 </script>
 </body>
 </html>
